@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ítems Compass</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+  <div id="canvas">
+    <div id="axis-x" class="axis"></div>
+    <div id="axis-y" class="axis"></div>
+    <!-- Aquí se renderizan los ítems por JS -->
+  </div>
+
+  <div id="menu">
+    <!-- Menú fijo inferior derecha -->
+    <div id="eje-x" class="eje-selector">Eje X</div>
+    <div id="eje-y" class="eje-selector">Eje Y</div>
+  </div>
+
+  <div id="popup" class="oculto">
+    <div class="contenido-popup">
+      <span id="cerrar-popup">×</span>
+      <h2 id="popup-titulo"></h2>
+      <div id="popup-descripcion"></div>
+      <img id="popup-imagen" src="" alt="">
+      <div id="popup-galeria"></div>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+
+</html>
