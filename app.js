@@ -110,9 +110,10 @@ function renderizarItems() {
     div.style.left = `${x}px`;
     div.style.top = `${y}px`;
 
-    // Imagen placeholder fija para ahora
+    // Imagen obligatoria desde el JSON (sin fallback)
+    // La imagen debe venir siempre del JSON, no se usa imagen por defecto
     const img = document.createElement("img");
-    img.src = "img/kirby_test.png";
+    img.src = item.imagen;
     img.alt = item.titulo;
     div.appendChild(img);
 
@@ -153,13 +154,19 @@ function mostrarPopup(item) {
   const popup = document.getElementById("popup");
   popup.classList.remove("oculto");
   document.getElementById("popup-titulo").textContent = item.titulo;
-  document.getElementById("popup-descripcion").innerHTML = (
-    item.descripcion || []
-  )
+  document.getElementById("popup-descripcion").innerHTML = (item.descripcion || [])
     .map((p) => `<p>${p}</p>`)
     .join("");
-  document.getElementById("popup-imagen").src =
-    item.imagen || item.miniatura || "";
+  const popupImg = document.getElementById("popup-imagen");
+  popupImg.src = item.imagen || item.miniatura || "";
+  popupImg.style.objectFit = "contain";
+  popupImg.style.maxWidth = "95%";
+  popupImg.style.maxHeight = "40vh";
+  popupImg.style.cursor = "zoom-in";
+  popupImg.onclick = (e) => {
+    e.stopPropagation();
+    mostrarPopupGrande(popupImg.src);
+  };
   document.getElementById("popup-galeria").innerHTML = (item.galeria || [])
     .map((src) =>
       src.match(/\.(mp4)$/i)
@@ -184,37 +191,50 @@ document.getElementById("popup").onclick = (e) => {
 window.onload = async function () {
   await cargarItems();
   renderizarItems();
-  centrarScroll();
-
-  // Centra el viewport en el canvas
-  const canvas = document.getElementById("canvas");
-  requestAnimationFrame(() => {
-    window.scrollTo(
-      canvas.offsetWidth / 2 - window.innerWidth / 2,
-      canvas.offsetHeight / 2 - window.innerHeight / 2
-    );
-  });
+  centrarScroll(true);   // Scroll inmediato al centro
+  setTimeout(() => centrarScroll(false), 350); // Luego animación suave
 };
 
-// Recalcula y reposiciona ítems al redimensionar ventana
 window.addEventListener("resize", () => {
-  // Re-renderiza los items para ajustarse a nuevo tamaño
   renderizarItems();
-  centrarScroll();
-
-  // Opcional: centrar scroll en canvas tras redimensionar
-  const canvas = document.getElementById("canvas");
-  window.scrollTo(
-    canvas.offsetWidth / 2 - window.innerWidth / 2,
-    canvas.offsetHeight / 2 - window.innerHeight / 2
-  );
+  centrarScroll(true);
+  setTimeout(() => centrarScroll(false), 300);
 });
 
-function centrarScroll() {
+function centrarScroll(forceAuto = false) {
   const canvas = document.getElementById("canvas");
   if (!canvas) return;
-  window.scrollTo(
-    canvas.offsetWidth / 2 - window.innerWidth / 2,
-    canvas.offsetHeight / 2 - window.innerHeight / 2
-  );
+  let intentos = 0;
+  function intentar() {
+    // Calcula el centro absoluto del canvas (por si el canvas no empieza en 0,0)
+    const rect = canvas.getBoundingClientRect();
+    const scrollLeft = window.pageXOffset || document.documentElement.scrollLeft;
+    const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+    const centerX = canvas.offsetLeft + canvas.offsetWidth / 2 - window.innerWidth / 2;
+    const centerY = canvas.offsetTop + canvas.offsetHeight / 2 - window.innerHeight / 2;
+
+    window.scrollTo({
+      left: centerX,
+      top: centerY,
+      behavior: forceAuto ? "auto" : "smooth"
+    });
+    intentos++;
+    if (intentos < 14) setTimeout(intentar, 130);
+  }
+  const delay = /Mobi|Android/i.test(navigator.userAgent) ? 250 : 70;
+  setTimeout(intentar, delay);
+}
+
+function mostrarPopupGrande(src) {
+  let modal = document.getElementById("modal-img-grande");
+  if (!modal) {
+    modal = document.createElement("div");
+    modal.id = "modal-img-grande";
+    modal.onclick = function(e) {
+      if (e.target === modal) modal.remove();
+    };
+    document.body.appendChild(modal);
+  }
+  modal.innerHTML = `<img src="${src}" class="popup-img-grande">`;
+  modal.style.display = "flex";
 }
