@@ -5,7 +5,7 @@ let ejeY = "";
 
 // Carga los ítems y ejes, y pinta el canvas
 async function cargarItems() {
-  const respuesta = await fetch('items.json');
+  const respuesta = await fetch("items.json");
   itemsData = await respuesta.json();
   ejes = Object.keys(itemsData[0].ejes);
 
@@ -18,8 +18,8 @@ async function cargarItems() {
 
 // Renderiza los selectores de ejes evitando duplicados
 function renderizarSelectoresEjes() {
-  const selectX = document.getElementById('eje-x');
-  const selectY = document.getElementById('eje-y');
+  const selectX = document.getElementById("eje-x");
+  const selectY = document.getElementById("eje-y");
 
   // Guardar valor actual
   const currentX = ejeX;
@@ -27,9 +27,9 @@ function renderizarSelectoresEjes() {
 
   // Eje X
   selectX.innerHTML = "";
-  ejes.forEach(eje => {
+  ejes.forEach((eje) => {
     if (eje !== ejeY) {
-      let optX = document.createElement('option');
+      let optX = document.createElement("option");
       optX.value = eje;
       optX.textContent = eje;
       if (eje === ejeX) optX.selected = true;
@@ -38,9 +38,9 @@ function renderizarSelectoresEjes() {
   });
   // Eje Y
   selectY.innerHTML = "";
-  ejes.forEach(eje => {
+  ejes.forEach((eje) => {
     if (eje !== ejeX) {
-      let optY = document.createElement('option');
+      let optY = document.createElement("option");
       optY.value = eje;
       optY.textContent = eje;
       if (eje === ejeY) optY.selected = true;
@@ -48,11 +48,12 @@ function renderizarSelectoresEjes() {
     }
   });
 
-  // Listeners
+  // Listeners para actualizar ejes y re-renderizar items al cambiar selección
   selectX.onchange = function () {
     ejeX = selectX.value;
-    if (ejeX === ejeY) { // Auto-cambia eje Y si colisiona
-      ejeY = ejes.find(e => e !== ejeX);
+    if (ejeX === ejeY) {
+      // Auto-cambia eje Y si colisiona
+      ejeY = ejes.find((e) => e !== ejeX);
     }
     renderizarSelectoresEjes();
     renderizarItems();
@@ -60,7 +61,7 @@ function renderizarSelectoresEjes() {
   selectY.onchange = function () {
     ejeY = selectY.value;
     if (ejeY === ejeX) {
-      ejeX = ejes.find(e => e !== ejeY);
+      ejeX = ejes.find((e) => e !== ejeY);
     }
     renderizarSelectoresEjes();
     renderizarItems();
@@ -79,58 +80,49 @@ function seleccionarEjesAleatorios() {
   ejeY = ejes[idx2];
 }
 
+// Función para mapear valores de eje a coordenadas en canvas
 function mapToCanvas(val, min, max, size) {
   return ((val - min) / (max - min)) * size;
 }
 
+// Renderiza los ítems en el canvas posicionándolos según los ejes seleccionados
 function renderizarItems() {
-  const canvas = document.getElementById('canvas');
-  Array.from(canvas.querySelectorAll('.item')).forEach(el => el.remove());
+  const canvas = document.getElementById("canvas");
+  // Limpia ítems previos
+  Array.from(canvas.querySelectorAll(".item")).forEach((el) => el.remove());
 
-  const canvasW = canvas.offsetWidth;
-  const canvasH = canvas.offsetHeight;
+  // El tamaño de los ítems se basa en viewport y se usa un placeholder de imagen
+  itemsData.forEach((item) => {
+    const div = document.createElement("div");
+    div.className = "item";
+    div.style.setProperty("--item-bg", item.colorFondo || "#b9bef7"); // color de fondo si existe
 
-  // Centra el círculo central siempre
-  let axisCenter = document.getElementById('axis-center');
-  if (!axisCenter) {
-    axisCenter = document.createElement('div');
-    axisCenter.id = 'axis-center';
-    canvas.appendChild(axisCenter);
-  }
-  axisCenter.style.left = `calc(50% - 5px)`;
-  axisCenter.style.top = `calc(50% - 5px)`;
+    const canvasW = canvas.offsetWidth;
+    const canvasH = canvas.offsetHeight;
 
-  itemsData.forEach(item => {
-    const div = document.createElement('div');
-    div.className = 'item';
-    div.dataset.id = item.id ?? item.titulo;
-
-    const x = mapToCanvas(item.ejes[ejeX], -10, 10, canvasW) - 40;
-    const y = mapToCanvas(item.ejes[ejeY], -10, 10, canvasH) - 40;
-
+    // Posicionamiento con rango -12 a 12
+    const x =
+      mapToCanvas(item.ejes[ejeX], -12, 12, canvasW) -
+      (div.offsetWidth / 2 || 40);
+    const y =
+      mapToCanvas(item.ejes[ejeY], -12, 12, canvasH) -
+      (div.offsetHeight / 2 || 40);
     div.style.left = `${x}px`;
     div.style.top = `${y}px`;
 
-    // Imagen o inicial
-    if (item.miniatura) {
-      const img = document.createElement('img');
-      img.src = item.miniatura;
-      img.alt = '';
-      div.appendChild(img);
-    } else {
-      const inicial = document.createElement('div');
-      inicial.className = 'item-inicial';
-      inicial.textContent = item.titulo[0].toUpperCase();
-      div.appendChild(inicial);
-    }
+    // Imagen placeholder fija para ahora
+    const img = document.createElement("img");
+    img.src = "img/kirby_test.png";
+    img.alt = item.titulo;
+    div.appendChild(img);
 
     // Título debajo
-    const tituloDiv = document.createElement('div');
-    tituloDiv.className = 'item-titulo';
+    const tituloDiv = document.createElement("div");
+    tituloDiv.className = "item-titulo";
     tituloDiv.textContent = item.titulo;
     div.appendChild(tituloDiv);
 
-    // Click en cuadrado o título = popup
+    // Click para mostrar popup
     div.onclick = (e) => {
       e.stopPropagation();
       mostrarPopup(item);
@@ -138,39 +130,64 @@ function renderizarItems() {
 
     canvas.appendChild(div);
   });
+
+  document.querySelectorAll(".item").forEach((item) => {
+    item.addEventListener("mouseenter", () => {
+      const randomRotate = Math.random() * 6 - 3; // de -3° a +3°
+      const randomScale = 1 + Math.random() * 0.1; // de 1 a 1.1
+
+      item.style.transform = `scale(${randomScale.toFixed(
+        2
+      )}) rotate(${randomRotate.toFixed(2)}deg)`;
+    });
+
+    item.addEventListener("mouseleave", () => {
+      // Vuelve a la normalidad
+      item.style.transform = "";
+    });
+  });
 }
 
-// Popup con info
+// Popup con info detallada del ítem seleccionado
 function mostrarPopup(item) {
-  const popup = document.getElementById('popup');
-  popup.classList.remove('oculto');
-  document.getElementById('popup-titulo').textContent = item.titulo;
-  document.getElementById('popup-descripcion').innerHTML = (item.descripcion || []).map(p => `<p>${p}</p>`).join("");
-  document.getElementById('popup-imagen').src = item.imagen || item.miniatura || '';
-  document.getElementById('popup-galeria').innerHTML = (item.galeria || []).map(src =>
-    src.match(/\.(mp4)$/i)
-      ? `<video src="${src}" controls style="max-width:120px;max-height:120px;"></video>`
-      : `<img src="${src}" style="max-width:120px;max-height:120px;">`
-  ).join('');
+  const popup = document.getElementById("popup");
+  popup.classList.remove("oculto");
+  document.getElementById("popup-titulo").textContent = item.titulo;
+  document.getElementById("popup-descripcion").innerHTML = (
+    item.descripcion || []
+  )
+    .map((p) => `<p>${p}</p>`)
+    .join("");
+  document.getElementById("popup-imagen").src =
+    item.imagen || item.miniatura || "";
+  document.getElementById("popup-galeria").innerHTML = (item.galeria || [])
+    .map((src) =>
+      src.match(/\.(mp4)$/i)
+        ? `<video src="${src}" controls style="max-width:120px;max-height:120px;"></video>`
+        : `<img src="${src}" style="max-width:120px;max-height:120px;">`
+    )
+    .join("");
 }
 
-// Cerrar popup
-document.getElementById('cerrar-popup').onclick = (e) => {
-  document.getElementById('popup').classList.add('oculto');
+// Cerrar popup al hacer click en botón cerrar
+document.getElementById("cerrar-popup").onclick = (e) => {
+  document.getElementById("popup").classList.add("oculto");
 };
-// Click fuera del popup: cierra también
-document.getElementById('popup').onclick = (e) => {
-  if (e.target === document.getElementById('popup')) {
-    document.getElementById('popup').classList.add('oculto');
+// Click fuera del popup también lo cierra
+document.getElementById("popup").onclick = (e) => {
+  if (e.target === document.getElementById("popup")) {
+    document.getElementById("popup").classList.add("oculto");
   }
 };
 
-// Inicializa todo
+// Inicializa todo al cargar la ventana
 window.onload = async function () {
   await cargarItems();
   renderizarItems();
-  // Centra el viewport
-  const canvas = document.getElementById('canvas');
+  centrarScroll();
+
+  // Centra el viewport en el canvas
+  const canvas = document.getElementById("canvas");
   requestAnimationFrame(() => {
     window.scrollTo(
       canvas.offsetWidth / 2 - window.innerWidth / 2,
@@ -178,3 +195,26 @@ window.onload = async function () {
     );
   });
 };
+
+// Recalcula y reposiciona ítems al redimensionar ventana
+window.addEventListener("resize", () => {
+  // Re-renderiza los items para ajustarse a nuevo tamaño
+  renderizarItems();
+  centrarScroll();
+
+  // Opcional: centrar scroll en canvas tras redimensionar
+  const canvas = document.getElementById("canvas");
+  window.scrollTo(
+    canvas.offsetWidth / 2 - window.innerWidth / 2,
+    canvas.offsetHeight / 2 - window.innerHeight / 2
+  );
+});
+
+function centrarScroll() {
+  const canvas = document.getElementById("canvas");
+  if (!canvas) return;
+  window.scrollTo(
+    canvas.offsetWidth / 2 - window.innerWidth / 2,
+    canvas.offsetHeight / 2 - window.innerHeight / 2
+  );
+}
