@@ -1,131 +1,180 @@
-// app.js
 let itemsData = [];
+let ejes = [];
+let ejeX = "";
+let ejeY = "";
 
+// Carga los ítems y ejes, y pinta el canvas
 async function cargarItems() {
   const respuesta = await fetch('items.json');
   itemsData = await respuesta.json();
-  console.log(itemsData); // confirmar carga
+  ejes = Object.keys(itemsData[0].ejes);
+
+  // Selecciona ejes aleatorios distintos
   seleccionarEjesAleatorios();
+
+  // Renderiza los selectores con las opciones válidas
+  renderizarSelectoresEjes();
 }
 
+// Renderiza los selectores de ejes evitando duplicados
+function renderizarSelectoresEjes() {
+  const selectX = document.getElementById('eje-x');
+  const selectY = document.getElementById('eje-y');
+
+  // Guardar valor actual
+  const currentX = ejeX;
+  const currentY = ejeY;
+
+  // Eje X
+  selectX.innerHTML = "";
+  ejes.forEach(eje => {
+    if (eje !== ejeY) {
+      let optX = document.createElement('option');
+      optX.value = eje;
+      optX.textContent = eje;
+      if (eje === ejeX) optX.selected = true;
+      selectX.appendChild(optX);
+    }
+  });
+  // Eje Y
+  selectY.innerHTML = "";
+  ejes.forEach(eje => {
+    if (eje !== ejeX) {
+      let optY = document.createElement('option');
+      optY.value = eje;
+      optY.textContent = eje;
+      if (eje === ejeY) optY.selected = true;
+      selectY.appendChild(optY);
+    }
+  });
+
+  // Listeners
+  selectX.onchange = function () {
+    ejeX = selectX.value;
+    if (ejeX === ejeY) { // Auto-cambia eje Y si colisiona
+      ejeY = ejes.find(e => e !== ejeX);
+    }
+    renderizarSelectoresEjes();
+    renderizarItems();
+  };
+  selectY.onchange = function () {
+    ejeY = selectY.value;
+    if (ejeY === ejeX) {
+      ejeX = ejes.find(e => e !== ejeY);
+    }
+    renderizarSelectoresEjes();
+    renderizarItems();
+  };
+}
+
+// Selecciona dos ejes aleatorios distintos
 function seleccionarEjesAleatorios() {
-  const todosEjes = Object.keys(itemsData[0].ejes);
-  const ejesElegidos = [];
+  let idx1 = Math.floor(Math.random() * ejes.length);
+  let idx2;
+  do {
+    idx2 = Math.floor(Math.random() * ejes.length);
+  } while (idx2 === idx1);
 
-  while (ejesElegidos.length < 2) {
-    const randomIndex = Math.floor(Math.random() * todosEjes.length);
-    const eje = todosEjes[randomIndex];
-    if (!ejesElegidos.includes(eje)) ejesElegidos.push(eje);
-  }
-
-  document.getElementById('eje-x').innerText = ejesElegidos[0];
-  document.getElementById('eje-y').innerText = ejesElegidos[1];
-
-  renderizarItems(ejesElegidos[0], ejesElegidos[1]);
+  ejeX = ejes[idx1];
+  ejeY = ejes[idx2];
 }
 
 function mapToCanvas(val, min, max, size) {
-  // val: valor del eje (-10 a 10), min=-10, max=10, size = ancho o alto canvas en px
   return ((val - min) / (max - min)) * size;
 }
 
-function renderizarItems(ejeX, ejeY) {
+function renderizarItems() {
   const canvas = document.getElementById('canvas');
-
-  // Elimina ítems previos, pero no los ejes ni el centro
   Array.from(canvas.querySelectorAll('.item')).forEach(el => el.remove());
 
   const canvasW = canvas.offsetWidth;
   const canvasH = canvas.offsetHeight;
 
-  // Añade un pequeño círculo visual en el centro del canvas para referencia
+  // Centra el círculo central siempre
   let axisCenter = document.getElementById('axis-center');
   if (!axisCenter) {
     axisCenter = document.createElement('div');
     axisCenter.id = 'axis-center';
-    // Estilos para el círculo central
-    axisCenter.style.position = 'absolute';
-    axisCenter.style.width = '10px';
-    axisCenter.style.height = '10px';
-    axisCenter.style.backgroundColor = 'red';
-    axisCenter.style.borderRadius = '50%';
-    axisCenter.style.left = `${canvasW / 2 - 5}px`; // centrar círculo (5 = mitad tamaño)
-    axisCenter.style.top = `${canvasH / 2 - 5}px`;
     canvas.appendChild(axisCenter);
-  } else {
-    // Actualiza posición en caso de cambio de tamaño
-    axisCenter.style.left = `${canvasW / 2 - 5}px`;
-    axisCenter.style.top = `${canvasH / 2 - 5}px`;
   }
+  axisCenter.style.left = `calc(50% - 5px)`;
+  axisCenter.style.top = `calc(50% - 5px)`;
 
   itemsData.forEach(item => {
-    // Crear contenedor principal del ítem
     const div = document.createElement('div');
     div.className = 'item';
-    div.title = item.titulo;
+    div.dataset.id = item.id ?? item.titulo;
 
-    // Mapea los valores de -10 a 10 en posición real dentro del canvas
-    // Restamos 40 para centrar el cuadrado (asumiendo tamaño 80x80)
     const x = mapToCanvas(item.ejes[ejeX], -10, 10, canvasW) - 40;
     const y = mapToCanvas(item.ejes[ejeY], -10, 10, canvasH) - 40;
 
-    // Posiciona el contenedor en el canvas
-    div.style.position = 'absolute';
     div.style.left = `${x}px`;
     div.style.top = `${y}px`;
-    div.style.width = '80px';
-    div.style.height = '80px';
-    div.style.boxSizing = 'border-box';
-    div.dataset.id = item.id ?? item.titulo;
 
+    // Imagen o inicial
     if (item.miniatura) {
       const img = document.createElement('img');
       img.src = item.miniatura;
       img.alt = '';
       div.appendChild(img);
     } else {
-      // Letra inicial, bien grande
       const inicial = document.createElement('div');
       inicial.className = 'item-inicial';
       inicial.textContent = item.titulo[0].toUpperCase();
       div.appendChild(inicial);
     }
 
-    // Añadir el contenedor del ítem al canvas
-    canvas.appendChild(div);
-
-    // Crear un div para mostrar el título completo debajo del recuadro
+    // Título debajo
     const tituloDiv = document.createElement('div');
     tituloDiv.className = 'item-titulo';
     tituloDiv.textContent = item.titulo;
-    tituloDiv.style.position = 'absolute';
-    tituloDiv.style.left = `${x}px`;
-    // Posición justo debajo del recuadro (80px altura del ítem + 4px margen)
-    tituloDiv.style.top = `${y + 80 + 4}px`;
-    tituloDiv.style.width = '80px';
-    tituloDiv.style.textAlign = 'center';
-    tituloDiv.style.fontSize = '12px';
-    tituloDiv.style.color = '#333';
-    tituloDiv.style.pointerEvents = 'none'; // para que no interfiera con eventos
+    div.appendChild(tituloDiv);
 
-    canvas.appendChild(tituloDiv);
+    // Click en cuadrado o título = popup
+    div.onclick = (e) => {
+      e.stopPropagation();
+      mostrarPopup(item);
+    };
+
+    canvas.appendChild(div);
   });
 }
 
-// Inicializar al cargar la página
-window.onload = async function() {
-  // Cargar items y renderizar ejes e ítems
-  await cargarItems();
+// Popup con info
+function mostrarPopup(item) {
+  const popup = document.getElementById('popup');
+  popup.classList.remove('oculto');
+  document.getElementById('popup-titulo').textContent = item.titulo;
+  document.getElementById('popup-descripcion').innerHTML = (item.descripcion || []).map(p => `<p>${p}</p>`).join("");
+  document.getElementById('popup-imagen').src = item.imagen || item.miniatura || '';
+  document.getElementById('popup-galeria').innerHTML = (item.galeria || []).map(src =>
+    src.match(/\.(mp4)$/i)
+      ? `<video src="${src}" controls style="max-width:120px;max-height:120px;"></video>`
+      : `<img src="${src}" style="max-width:120px;max-height:120px;">`
+  ).join('');
+}
 
-  // Una vez renderizado el canvas, centra el scroll en el medio del canvas
-  const canvas = document.getElementById('canvas');
-  if (canvas) {
-    // Esperar un frame para asegurar que el DOM está actualizado
-    requestAnimationFrame(() => {
-      window.scrollTo(
-        canvas.offsetWidth / 2 - window.innerWidth / 2,
-        canvas.offsetHeight / 2 - window.innerHeight / 2
-      );
-    });
+// Cerrar popup
+document.getElementById('cerrar-popup').onclick = (e) => {
+  document.getElementById('popup').classList.add('oculto');
+};
+// Click fuera del popup: cierra también
+document.getElementById('popup').onclick = (e) => {
+  if (e.target === document.getElementById('popup')) {
+    document.getElementById('popup').classList.add('oculto');
   }
+};
+
+// Inicializa todo
+window.onload = async function () {
+  await cargarItems();
+  renderizarItems();
+  // Centra el viewport
+  const canvas = document.getElementById('canvas');
+  requestAnimationFrame(() => {
+    window.scrollTo(
+      canvas.offsetWidth / 2 - window.innerWidth / 2,
+      canvas.offsetHeight / 2 - window.innerHeight / 2
+    );
+  });
 };

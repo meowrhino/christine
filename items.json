@@ -1,15 +1,20 @@
 [
   {
-    "titulo": "Bundespreis für Kunststudierende 2021 - Federal award for Art students 2021",
+    "titulo": "Bundespreis für Kunststudierende 2021 – Federal Award for Art Students 2021",
     "ejes": {
       "Illustration/Graphic": 7,
-      "Artwork/Commercial": 7,
-      "Demure/Opinionated": -1,
-      "Silly/Serious": 7
+      "Artwork/Commercial": 6,
+      "Demure/Opinionated": -2,
+      "Silly/Serious": 5
     },
     "descripcion": [
-      "The “Bundespreis für Kunststudierende” (Federal Award for Art Students) honours students from various disciplines at Germany’s 24 art colleges every two years. The competition was organised by the German Student Union and funded by the German Federal Ministry of Education and Research. Our team contributed the visual identity of the exhibition catalogue, the website, posters and invitation cards.",
-      "Tragic events, social and political unrest and a pandemic shaped the past few years that required a reflection of one’s values and priorities. In a post-truth setting, we have to rethink the handling of information. Our design concept “Infodemic” plays with this overload of data—images and text line up en masse—visualizing the news streams that reach us daily. The artists, though, represent positions that can be silver linings on the horizon, encouraging us to look behind the cacophonic curtain."
+      "The “Bundespreis für Kunststudierende” (Federal Award for Art Students) honours students from various disciplines at Germany’s 24 art colleges every two years.",
+      "The competition was organised by the German Student Union and funded by the German Federal Ministry of Education and Research.",
+      "Our team contributed the visual identity of the exhibition catalogue, the website, posters and invitation cards.",
+      "Tragic events, social and political unrest and a pandemic shaped the past few years that required a reflection of one’s values and priorities.",
+      "In a post-truth setting, we have to rethink the handling of information.",
+      "Our design concept “Infodemic” plays with this overload of data—images and text line up en masse—visualizing the news streams that reach us daily.",
+      "The artists, though, represent positions that can be silver linings on the horizon, encouraging us to look behind the cacophonic curtain."
     ],
     "imagen": "",
     "miniatura": "",
@@ -19,13 +24,13 @@
   {
     "titulo": "Colorama Clubhouse",
     "ejes": {
-      "Illustration/Graphic": -8,
-      "Artwork/Commercial": -8,
-      "Demure/Opinionated": 3,
+      "Illustration/Graphic": -7,
+      "Artwork/Commercial": -6,
+      "Demure/Opinionated": 2,
       "Silly/Serious": -7
     },
     "descripcion": [
-      "Commission work for Berlin-based Riso print publisher Colorama as part of the anthology “Colorama Clubhouse”"
+      "Commission work for Berlin-based Riso print publisher Colorama as part of the anthology “Colorama Clubhouse”."
     ],
     "imagen": "",
     "miniatura": "",
@@ -35,13 +40,13 @@
   {
     "titulo": "Coming of Middle-Age",
     "ejes": {
-      "Illustration/Graphic": -10,
-      "Artwork/Commercial": 5,
-      "Demure/Opinionated": 0,
-      "Silly/Serious": 3
+      "Illustration/Graphic": -9,
+      "Artwork/Commercial": 4,
+      "Demure/Opinionated": 1,
+      "Silly/Serious": 2
     },
     "descripcion": [
-      "Commission work for German Feminist “Missy Magazine” about sex life after menopause."
+      "Commission work for German feminist magazine “Missy Magazine” about sex life after menopause."
     ],
     "imagen": "",
     "miniatura": "",
@@ -49,15 +54,15 @@
     "principal": ""
   },
   {
-    "titulo": "Leerstellen, oder: Wo sind eigentlich die…? - Empty spaces or: Where are actually the…?",
+    "titulo": "Leerstellen, oder: Wo sind eigentlich die…? – Empty spaces or: Where are actually the…?",
     "ejes": {
-      "Illustration/Graphic": 3,
-      "Artwork/Commercial": -2,
-      "Demure/Opinionated": 4,
-      "Silly/Serious": 2
+      "Illustration/Graphic": 4,
+      "Artwork/Commercial": -3,
+      "Demure/Opinionated": 5,
+      "Silly/Serious": 3
     },
     "descripcion": [
-      "Digital poster print for feminist art lecture #WHOSEFREEDOM?"
+      "Digital poster print for feminist art lecture #WHOSEFREEDOM?."
     ],
     "imagen": "",
     "miniatura": "",
@@ -67,13 +72,195 @@
   {
     "titulo": "Listening Exercise",
     "ejes": {
-      "Illustration/Graphic": 7,
-      "Artwork/Commercial": -10,
-      "Demure/Opinionated": 10,
+      "Illustration/Graphic": 8,
+      "Artwork/Commercial": -9,
+      "Demure/Opinionated": 9,
+      "Silly/Serious": 4
+    },
+    "descripcion": [
+      "What is the first reaction to a complaint? Compassion or annoyance?",
+      "“Listening Exercise” is a confrontation, an audio-visual experiment, to the listener‘s possible negative reaction regarding a complaint and how defensiveness points out a complicity within the situation.",
+      "Because when a problem is pointed out, it becomes clear that it is not an isolated problem but a system of problems.",
+      "My complaint is not an isolated case, but why is it treated as such?",
+      "In three parts, my experience of being stereotyped and fetishized as a racialized person is described as self-written texts.",
+      "These text snippets are embedded between text extracts from decolonial theory with quotes from Stuart Hall, bell hooks, and Sara Ahmed.",
+      "The crucial factor for this combination of texts was my realization that often personal experiences of discrimination are not taken seriously because they often have an emotional tone."
+    ],
+    "imagen": "",
+    "miniatura": "",
+    "galeria": [],
+    "principal": ""
+  },
+  {
+    "titulo": "Magical Soup",
+    "ejes": {
+      "Illustration/Graphic": 6,
+      "Artwork/Commercial": 3,
+      "Demure/Opinionated": 3,
+      "Silly/Serious": 0
+    },
+    "descripcion": [
+      "A playful exploration of culinary art through imaginative illustrations and vibrant colors."
+    ],
+    "imagen": "",
+    "miniatura": "",
+    "galeria": [],
+    "principal": ""
+  },
+  {
+    "titulo": "Mart-Stam Preis Katalog – Mart-Stam Price Catalogue",
+    "ejes": {
+      "Illustration/Graphic": -4,
+      "Artwork/Commercial": 7,
+      "Demure/Opinionated": 2,
+      "Silly/Serious": 3
+    },
+    "descripcion": [
+      "Catalogue design for the Mart-Stam Prize, showcasing modernist furniture and design pieces."
+    ],
+    "imagen": "",
+    "miniatura": "",
+    "galeria": [],
+    "principal": ""
+  },
+  {
+    "titulo": "New Apple",
+    "ejes": {
+      "Illustration/Graphic": 5,
+      "Artwork/Commercial": 8,
+      "Demure/Opinionated": -3,
+      "Silly/Serious": 4
+    },
+    "descripcion": [
+      "Branding and packaging concept for a new organic apple product line."
+    ],
+    "imagen": "",
+    "miniatura": "",
+    "galeria": [],
+    "principal": ""
+  },
+  {
+    "titulo": "Open Späti: Wofür ist es zu spät? – What is it too late for?",
+    "ejes": {
+      "Illustration/Graphic": 3,
+      "Artwork/Commercial": -2,
+      "Demure/Opinionated": 6,
+      "Silly/Serious": 1
+    },
+    "descripcion": [
+      "An interactive exhibition exploring the cultural significance of Berlin's late-night convenience stores."
+    ],
+    "imagen": "",
+    "miniatura": "",
+    "galeria": [],
+    "principal": ""
+  },
+  {
+    "titulo": "Peggy Gou x Nike",
+    "ejes": {
+      "Illustration/Graphic": -6,
+      "Artwork/Commercial": 8,
+      "Demure/Opinionated": 1,
       "Silly/Serious": 5
     },
     "descripcion": [
-      "What is the first reaction to a complaint? Compassion or annoyance? “Listening exercise” is a confrontation, an audio-visual experiment, to the listener‘s possible negative reaction regarding a complaint and how defensiveness points out a complicity within the situation. Because when a problem is pointed out, it becomes clear that it is not an isolated problem but a a system of problems. My complaint is not an isolated case, but why is it treated as such? In three parts, my experience of being stereotyped and fetishized as an racialized person is described as self-written texts. These text snippets are embedded between text extracts from decolonial theory with quotes from Stuart Hall, bell hooks, and Sara Ahmed. The crucial factor for this combination of texts was my realization that often personal experiences of discrimination are not taken seriously because they often have an emotional tone."
+      "Collaborative campaign design for Peggy Gou's Nike sneaker release."
+    ],
+    "imagen": "",
+    "miniatura": "",
+    "galeria": [],
+    "principal": ""
+  },
+  {
+    "titulo": "SISSYHOOD",
+    "ejes": {
+      "Illustration/Graphic": 7,
+      "Artwork/Commercial": 3,
+      "Demure/Opinionated": 6,
+      "Silly/Serious": 2
+    },
+    "descripcion": [
+      "Visual identity and campaign for SISSYHOOD, a platform celebrating queer culture and identity."
+    ],
+    "imagen": "",
+    "miniatura": "",
+    "galeria": [],
+    "principal": ""
+  },
+  {
+    "titulo": "Stories for Damage Control",
+    "ejes": {
+      "Illustration/Graphic": 4,
+      "Artwork/Commercial": 6,
+      "Demure/Opinionated": 5,
+      "Silly/Serious": 1
+    },
+    "descripcion": [
+      "A series of narrative illustrations addressing social and environmental issues."
+    ],
+    "imagen": "",
+    "miniatura": "",
+    "galeria": [],
+    "principal": ""
+  },
+  {
+    "titulo": "Sweet & Reckless",
+    "ejes": {
+      "Illustration/Graphic": 6,
+      "Artwork/Commercial": 2,
+      "Demure/Opinionated": 0,
+      "Silly/Serious": 3
+    },
+    "descripcion": [
+      "Artistic collaboration exploring themes of youth and rebellion through mixed media."
+    ],
+    "imagen": "",
+    "miniatura": "",
+    "galeria": [],
+    "principal": ""
+  },
+  {
+    "titulo": "Wem nützt weiße Solidarität? – What’s the use of white solidarity?",
+    "ejes": {
+      "Illustration/Graphic": 1,
+      "Artwork/Commercial": -4,
+      "Demure/Opinionated": 8,
+      "Silly/Serious": 6
+    },
+    "descripcion": [
+      "A critical examination of racial politics and solidarity movements through graphic essays."
+    ],
+    "imagen": "",
+    "miniatura": "",
+    "galeria": [],
+    "principal": ""
+  },
+  {
+    "titulo": "Image in the Time of Bootlegging",
+    "ejes": {
+      "Illustration/Graphic": 7,
+      "Artwork/Commercial": 2,
+      "Demure/Opinionated": 3,
+      "Silly/Serious": 4
+    },
+    "descripcion": [
+      "Documentary style project exploring the circulation of images in underground cultures."
+    ],
+    "imagen": "",
+    "miniatura": "",
+    "galeria": [],
+    "principal": ""
+  },
+  {
+    "titulo": "Sailor Quarrel",
+    "ejes": {
+      "Illustration/Graphic": 4,
+      "Artwork/Commercial": 5,
+      "Demure/Opinionated": 1,
+      "Silly/Serious": 1
+    },
+    "descripcion": [
+      "A graphic novel project depicting the conflicts and camaraderie among sailors."
     ],
     "imagen": "",
     "miniatura": "",
