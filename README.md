@@ -195,25 +195,3 @@ Proyecto interno de exploración UI/UX. Uso de imágenes y textos con fines de p
 
 NOTAS:
 
-vale y me gustaria que el axis-x y el axis-y fuesen una linea dotted de color mint-apple :O 
-
-#axis-x {
-  left: 0;
-  right: 0;
-  top: 50%;
-  height: 2px;
-}
-
-#axis-y {
-  top: 0;
-  bottom: 0;
-  left: 50%;
-  width: 2px;
-}
-
-#axis-x, axis-y {
-  line: dotted mint green 
-}
-
-
-// cuando añado el margenes menta peta un poco todo! 

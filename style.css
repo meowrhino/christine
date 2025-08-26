@@ -10,8 +10,16 @@
   --frame-v: 5dvh; /* margen vertical top/bottom */
   --frame-h: 2.5dvw; /* margen horizontal left/right */
 
-  --content-h: calc(100dvh - (var(--frame-v) * 2)); /* alto útil = 100dvh - 2*frame-v */
-  --content-w: calc(100dvw - (var(--frame-h) * 2)); /* ancho útil = 100dvw - 2*frame-h */
+  --axis-thickness: 2px;  /* grosor de la línea */
+  --axis-dash: 16px;      /* largo de cada dash */
+  --axis-gap: 12px;       /* separación entre dashes */
+
+  --content-h: calc(
+    100dvh - (var(--frame-v) * 2)
+  ); /* alto útil = 100dvh - 2*frame-v */
+  --content-w: calc(
+    100dvw - (var(--frame-h) * 2)
+  ); /* ancho útil = 100dvw - 2*frame-h */
 
   /* Paleta utilitaria */
   --mint-apple: #c9ff7f; /* acento menta */
@@ -67,8 +75,8 @@ body {
 
 body,
 html {
-  width: 100vw;
-  height: 100vh;
+  width: 100dvw;
+  height: 100dvh;
   overflow: auto;
 }
 
@@ -81,27 +89,38 @@ html {
 */
 .axis {
   position: absolute;
-  background: #bbb;
   z-index: 1;
-  opacity: 0.7;
+  pointer-events: none; /* no bloquear clics */
 }
 
 #axis-x {
   left: 0;
   right: 0;
   top: 50%;
-  height: 2px;
+  height: 0; /* dibujamos con el borde para que quede centrado */
+  border-top: var(--axis-thickness) solid transparent;
+  border-image: repeating-linear-gradient(
+    to right,
+    var(--mint-apple) 0 var(--axis-dash),
+    transparent 0 calc(var(--axis-dash) + var(--axis-gap))
+  ) 1;
 }
 
 #axis-y {
   top: 0;
   bottom: 0;
   left: 50%;
-  width: 2px;
+  width: 0; /* dibujamos con el borde para que quede centrado */
+  border-left: var(--axis-thickness) solid transparent;
+  border-image: repeating-linear-gradient(
+    to bottom,
+    var(--mint-apple) 0 var(--axis-dash),
+    transparent 0 calc(var(--axis-dash) + var(--axis-gap))
+  ) 1;
 }
 
 #axis-x,
-axis-y {
+#axis-y {
 }
 
 /* Visual indicator for the center of the axes */
@@ -279,10 +298,10 @@ axis-y {
     height: 100dvh;
   } */
 
-  :root {
-      --content-h: calc(100dvh - (var(--frame-v))); 
-  --content-w: calc(100dvw - (var(--frame-h)));
-  }
+  /* :root {
+    --content-h: calc(100dvh - (var(--frame-v)));
+    --content-w: calc(100dvw - (var(--frame-h)));
+  } */
 
   /* Ítems un poco más pequeños, proporcionales */
   .item {
