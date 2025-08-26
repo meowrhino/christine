@@ -1,12 +1,15 @@
 :root {
   /* Paleta utilitaria */
-  --mint-apple:   #C9FF7F; /* acento menta */
-  --slate-warm:   #686369; /* gris pizarra cálido */
-  --rose-clay:    #BA9592; /* rosa arcilla suave */
-  --neon-green:   #00FF00; /* highlight/estado activo */
-  --aqua:         #00FFFF; /* cian de énfasis */
-  --royal-blue:   #0000FF; /* azul intenso */
-  --ink:          #000000; /* texto/contornos */
+  --mint-apple: #c9ff7f; /* acento menta */
+  --slate-warm: #686369; /* gris pizarra cálido */
+  --rose-clay: #ba9592; /* rosa arcilla suave */
+  --neon-green: #00ff00; /* highlight/estado activo */
+  --aqua: #00ffff; /* cian de énfasis */
+  --royal-blue: #0000ff; /* azul intenso */
+  --ink: #000000; /* texto/contornos */
+
+  /* Tamaño de arrows (control central) */
+  --cardinal-size: clamp(32px, 8vmin, 96px);
 }
 
 /* ============================
@@ -33,14 +36,8 @@ body {
   overflow: auto;
 }
 
-@media (max-width: 768px) {
-  #canvas {
-    width: calc(100vw * 2); /* canvas x2 en móvil */
-    height: calc(100vh * 2);
-  }
-}
-
-body, html {
+body,
+html {
   width: 100vw;
   height: 100vh;
   overflow: auto;
@@ -142,7 +139,7 @@ body, html {
   font-size: 3.5dvw;
 
   color: #7e7abb;
-  background: linear-gradient(120deg,#e6eaff 70%, #e9e4fc 100%);
+  background: linear-gradient(120deg, #e6eaff 70%, #e9e4fc 100%);
   font-weight: 700;
   border-radius: 9px;
   user-select: none;
@@ -207,7 +204,7 @@ body, html {
   display: flex;
   align-items: center;
   justify-content: center;
-  background: rgba(0,0,0,0.25); /* velito translúcido */
+  background: rgba(0, 0, 0, 0.25); /* velito translúcido */
   z-index: 9999;
   /* Sin borde, sin sombra */
 }
@@ -249,13 +246,25 @@ body, html {
    Adjust item sizes for smaller screens (<600px)
 */
 @media (max-width: 600px) {
+  /* Canvas sigue 1x en móvil */
+  #canvas {
+    width: 100dvw;
+    height: 100dvh;
+  }
+
+  /* Ítems un poco más pequeños, proporcionales */
   .item {
-    width: 60px;
-    height: 60px;
+    width: clamp(48px, 10vw, 72px);
+    height: clamp(64px, 12vh, 96px);
   }
   .item img {
-    width: 60px;
-    height: 60px;
+    width: 100%;
+    height: 70%;
+  }
+
+  /* Título más pequeño */
+  .item-titulo {
+    font-size: clamp(11px, 3.2vw, 14px);
   }
 }
 
@@ -264,21 +273,34 @@ body, html {
    ============================ */
 .cardinal-slot {
   position: fixed;
-  z-index: 90;               /* debajo del overlay del popup (z=100), por encima del resto */
-  pointer-events: none;      /* no bloquear interacciones de la página */
+  z-index: 90;
+  pointer-events: none;
   display: flex;
   align-items: center;
   justify-content: center;
 }
-
 .cardinal-slot img {
   display: block;
-  max-width: clamp(32px, 8vmin, 96px);
-  max-height: clamp(32px, 8vmin, 96px);
+  max-width: var(--cardinal-size);
+  max-height: var(--cardinal-size);
 }
-
-/* Centrados en cada borde con ligeros márgenes */
-.slot-top    { top:    1rem; left: 50%; transform: translateX(-50%); }
-.slot-bottom { bottom: 1rem; left: 50%; transform: translateX(-50%); }
-.slot-left   { left:   1rem; top:  50%; transform: translateY(-50%); }
-.slot-right  { right:  1rem; top:  50%; transform: translateY(-50%); }
+.slot-top {
+  top: 12px;
+  left: 50%;
+  transform: translateX(-50%);
+}
+.slot-bottom {
+  bottom: 12px;
+  left: 50%;
+  transform: translateX(-50%);
+}
+.slot-left {
+  left: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+}
+.slot-right {
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+}
