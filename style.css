@@ -1,4 +1,11 @@
 :root {
+  /* Cardinal sizes by axis */
+  --cardinal-width-x: clamp(60px, 10vw, 120px);
+  --cardinal-height-y: clamp(48px, 6vh, 96px);
+
+  /* Tamaño de arrows (control central) */
+  --edge-nudge: 0px; /* microajuste para pegar a sangre (0–2px) */
+
   /* Paleta utilitaria */
   --mint-apple: #c9ff7f; /* acento menta */
   --slate-warm: #686369; /* gris pizarra cálido */
@@ -7,9 +14,6 @@
   --aqua: #00ffff; /* cian de énfasis */
   --royal-blue: #0000ff; /* azul intenso */
   --ink: #000000; /* texto/contornos */
-
-  /* Tamaño de arrows (control central) */
-  --cardinal-size: clamp(32px, 8vmin, 96px);
 }
 
 /* ============================
@@ -71,6 +75,10 @@ html {
   width: 2px;
 }
 
+#axis-x, axis-y {
+  
+}
+
 /* Visual indicator for the center of the axes */
 #axis-center {
   position: absolute;
@@ -99,8 +107,8 @@ html {
   align-items: center;
   justify-content: flex-start;
 
-
-  transition: transform 0.33s cubic-bezier(0.35,1.7,0.43,0.81), box-shadow 0.28s cubic-bezier(0.2,0.9,0.35,1.4), background 0.22s;
+  transition: transform 0.33s cubic-bezier(0.35, 1.7, 0.43, 0.81),
+    box-shadow 0.28s cubic-bezier(0.2, 0.9, 0.35, 1.4), background 0.22s;
   overflow: visible;
 
   /*
@@ -123,12 +131,6 @@ html {
   /* box-shadow: 0 12px 40px 0 rgba(56,72,168,0.14), 0 2px 4px #d8d8fa; 
 
 } lo hemos pasado al document.querySelectorAll(.item) del js!*/
-
-.item img {
-  width: 100%;
-  height: 100%;
-  object-fit: fit;
-}
 
 .item-inicial {
   width: 100%;
@@ -247,10 +249,10 @@ html {
 */
 @media (max-width: 600px) {
   /* Canvas sigue 1x en móvil */
-  #canvas {
+  /* #canvas {
     width: 100dvw;
     height: 100dvh;
-  }
+  } */
 
   /* Ítems un poco más pequeños, proporcionales */
   .item {
@@ -278,29 +280,48 @@ html {
   display: flex;
   align-items: center;
   justify-content: center;
-}
-.cardinal-slot img {
-  display: block;
-  max-width: var(--cardinal-size);
-  max-height: var(--cardinal-size);
+  line-height: 0;
 }
 .slot-top {
-  top: 12px;
+  top: 0px;
   left: 50%;
-  transform: translateX(-50%);
+  transform: translate(-50%, 0);
 }
 .slot-bottom {
-  bottom: 12px;
+  bottom: 0px;
   left: 50%;
-  transform: translateX(-50%);
+  transform: translate(-50%, 0);
 }
 .slot-left {
-  left: 12px;
+  left: 0px;
   top: 50%;
-  transform: translateY(-50%);
+  transform: translate(calc(-1 * var(--edge-nudge)), -50%);
 }
+
 .slot-right {
-  right: 12px;
+  right: 0px;
   top: 50%;
-  transform: translateY(-50%);
+  transform: translate(calc(-1 * var(--edge-nudge)), -50%);
+}
+
+.cardinal-slot img {
+  display: block;
+}
+
+/* LEFT/RIGHT → width fixed, height auto */
+.slot-left .cardinal-img,
+.slot-right .cardinal-img {
+  width: var(--cardinal-width-x);
+  height: auto;
+}
+
+/* TOP/BOTTOM → height fixed, width auto */
+.slot-top .cardinal-img,
+.slot-bottom .cardinal-img {
+  height: var(--cardinal-height-y);
+  width: auto;
+}
+
+.slot-top .cardinal-img {
+  transform: translateY(calc(-1 * var(--edge-top-gap)));
 }
