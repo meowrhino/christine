@@ -5,6 +5,8 @@
 
   /* Tamaño de arrows (control central) */
   --edge-nudge: 0px; /* microajuste para pegar a sangre (0–2px) */
+  --edge-top-gap: 0px;
+  --edge-bottom-gap: 0px;
 
   /*margenes de colores*/
   --frame-v: 5dvh; /* margen vertical top/bottom */
@@ -13,6 +15,9 @@
   --axis-thickness: 2px;  /* grosor de la línea */
   --axis-dash: 16px;      /* largo de cada dash */
   --axis-gap: 12px;       /* separación entre dashes */
+
+  --axis-phase-x: -8px;    /* offset desde el centro para X */
+  --axis-phase-y: -8px;    /* offset desde el centro para Y */
 
   --content-h: calc(
     100dvh - (var(--frame-v) * 2)
@@ -97,26 +102,80 @@ html {
   left: 0;
   right: 0;
   top: 50%;
-  height: 0; /* dibujamos con el borde para que quede centrado */
-  border-top: var(--axis-thickness) solid transparent;
-  border-image: repeating-linear-gradient(
+  height: 0; /* dibujamos con pseudo-elementos */
+}
+#axis-x::before,
+#axis-x::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  height: var(--axis-thickness);
+  transform: translateY(-50%);
+  background-repeat: repeat;
+  background-size: auto 100%;
+  pointer-events: none;
+}
+/* izquierda (centro → izquierda) */
+#axis-x::before {
+  left: 0;
+  right: 50%;
+  background-image: repeating-linear-gradient(
+    to left,
+    var(--mint-apple) 0 var(--axis-dash),
+    transparent 0 calc(var(--axis-dash) + var(--axis-gap))
+  );
+  background-position: calc(100% - var(--axis-phase-x)) 50%;
+}
+/* derecha (centro → derecha) */
+#axis-x::after {
+  left: 50%;
+  right: 0;
+  background-image: repeating-linear-gradient(
     to right,
     var(--mint-apple) 0 var(--axis-dash),
     transparent 0 calc(var(--axis-dash) + var(--axis-gap))
-  ) 1;
+  );
+  background-position: var(--axis-phase-x) 50%;
 }
 
 #axis-y {
   top: 0;
   bottom: 0;
   left: 50%;
-  width: 0; /* dibujamos con el borde para que quede centrado */
-  border-left: var(--axis-thickness) solid transparent;
-  border-image: repeating-linear-gradient(
+  width: 0; /* dibujamos con pseudo-elementos */
+}
+#axis-y::before,
+#axis-y::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  width: var(--axis-thickness);
+  transform: translateX(-50%);
+  background-repeat: repeat;
+  background-size: 100% auto;
+  pointer-events: none;
+}
+/* arriba (centro → arriba) */
+#axis-y::before {
+  top: 0;
+  bottom: 50%;
+  background-image: repeating-linear-gradient(
+    to top,
+    var(--mint-apple) 0 var(--axis-dash),
+    transparent 0 calc(var(--axis-dash) + var(--axis-gap))
+  );
+  background-position: 50% calc(100% - var(--axis-phase-y));
+}
+/* abajo (centro → abajo) */
+#axis-y::after {
+  top: 50%;
+  bottom: 0;
+  background-image: repeating-linear-gradient(
     to bottom,
     var(--mint-apple) 0 var(--axis-dash),
     transparent 0 calc(var(--axis-dash) + var(--axis-gap))
-  ) 1;
+  );
+  background-position: 50% var(--axis-phase-y);
 }
 
 #axis-x,
@@ -350,7 +409,7 @@ html {
 .slot-right {
   right: 0px;
   top: 50%;
-  transform: translate(calc(-1 * var(--edge-nudge)), -50%);
+  transform: translate(var(--edge-nudge), -50%);
 }
 
 .cardinal-slot img {
@@ -373,4 +432,7 @@ html {
 
 .slot-top .cardinal-img {
   transform: translateY(calc(-1 * var(--edge-top-gap)));
+}
+.slot-bottom .cardinal-img {
+  transform: translateY(var(--edge-bottom-gap));
 }
