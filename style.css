@@ -1,3 +1,14 @@
+:root {
+  /* Paleta utilitaria */
+  --mint-apple:   #C9FF7F; /* acento menta */
+  --slate-warm:   #686369; /* gris pizarra cálido */
+  --rose-clay:    #BA9592; /* rosa arcilla suave */
+  --neon-green:   #00FF00; /* highlight/estado activo */
+  --aqua:         #00FFFF; /* cian de énfasis */
+  --royal-blue:   #0000FF; /* azul intenso */
+  --ink:          #000000; /* texto/contornos */
+}
+
 /* ============================
    General Styles
    ============================ */
@@ -247,3 +258,27 @@ body, html {
     height: 60px;
   }
 }
+
+/* ============================
+   Cardinal Arrows (bordes)
+   ============================ */
+.cardinal-slot {
+  position: fixed;
+  z-index: 90;               /* debajo del overlay del popup (z=100), por encima del resto */
+  pointer-events: none;      /* no bloquear interacciones de la página */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.cardinal-slot img {
+  display: block;
+  max-width: clamp(32px, 8vmin, 96px);
+  max-height: clamp(32px, 8vmin, 96px);
+}
+
+/* Centrados en cada borde con ligeros márgenes */
+.slot-top    { top:    1rem; left: 50%; transform: translateX(-50%); }
+.slot-bottom { bottom: 1rem; left: 50%; transform: translateX(-50%); }
+.slot-left   { left:   1rem; top:  50%; transform: translateY(-50%); }
+.slot-right  { right:  1rem; top:  50%; transform: translateY(-50%); }

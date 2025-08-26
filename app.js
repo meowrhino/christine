@@ -191,7 +191,9 @@ document.getElementById("popup").onclick = (e) => {
 window.onload = async function () {
   await cargarItems();
   renderizarItems();
-  centrarScroll(true);   // Scroll inmediato al centro
+  
+  generateCardinalArrows();
+centrarScroll(true);   // Scroll inmediato al centro
   setTimeout(() => centrarScroll(false), 350); // Luego animación suave
 };
 
@@ -237,4 +239,59 @@ function mostrarPopupGrande(src) {
   }
   modal.innerHTML = `<img src="${src}" class="popup-img-grande">`;
   modal.style.display = "flex";
+}
+
+// --- Cardinal Arrows ---
+function normalizePole(label) {
+  return String(label || "")
+    .trim()
+    .toUpperCase()
+    .replace(/[^A-Z0-9]/g, "");
+}
+
+function setSlotImg(slotId, side, poleName) {
+  const slot = document.getElementById(slotId);
+  if (!slot) return;
+  slot.replaceChildren();
+
+  const tryNames = [poleName];
+  if (poleName === "OPINIONATED") {
+    tryNames.push("OPINION");
+  }
+
+  const img = new Image();
+  img.className = "cardinal-img";
+  let i = 0;
+  function setSrc() {
+    img.src = `img/_arrows/${side}/${tryNames[i]}.png`;
+    img.alt = `${side}-${tryNames[i]}`;
+  }
+  img.onerror = () => {
+    i++;
+    if (i < tryNames.length) setSrc();
+    else slot.replaceChildren();
+  };
+  setSrc();
+  slot.appendChild(img);
+}
+
+/**
+ * Genera/actualiza las flechas cardinales según los ejes activos.
+ * Convención:
+ *  - Eje X:  "Left / Right"  → left = etiqueta de la IZQUIERDA, right = etiqueta de la DERECHA
+ *  - Eje Y:  "Top / Bottom"  → top = etiqueta SUPERIOR (valores negativos), bottom = etiqueta INFERIOR (positivos)
+ */
+function generateCardinalArrows() {
+  const [leftLabel, rightLabel]   = String(ejeX).split("/");
+  const [topLabel,  bottomLabel]  = String(ejeY).split("/");
+
+  const leftName   = normalizePole(leftLabel);
+  const rightName  = normalizePole(rightLabel);
+  const topName    = normalizePole(topLabel);
+  const bottomName = normalizePole(bottomLabel);
+
+  setSlotImg("slot-left",   "left",   leftName);
+  setSlotImg("slot-right",  "right",  rightName);
+  setSlotImg("slot-top",    "top",    topName);
+  setSlotImg("slot-bottom", "bottom", bottomName);
 }
