@@ -20,8 +20,8 @@
   --axis-phase-y: -8px;    /* offset desde el centro para Y */
 
   /* Radar pulse */
-  --radar-color: var(--rose-clay);
-  --radar-stroke: 2px;
+  --radar-color: var(--mint-apple);
+  --radar-stroke: 10px;
   --radar-duration: 1400ms;
   --radar-delay: 500ms; /* segunda onda, desfasada */
 
@@ -59,7 +59,6 @@ body {
 
   display: flex;
   align-items: center;
-  
 }
 
 /* Marco de márgenes menta que centra el canvas */
@@ -234,7 +233,7 @@ html {
   left: 50%;
   width: 10px;
   height: 10px;
-  background: #bbb;
+  /* background: #bbb; */
   border-radius: 50%;
   transform: translate(-50%, -50%);
   box-shadow: 1px 1px 5px rgba(0, 0, 0, 0.2);
@@ -492,7 +491,7 @@ html {
 #mouse-axes .h-left,
 #mouse-axes .h-right{
   position: absolute; height: var(--axis-thickness);
-  top: calc(var(--mouse-y, 50vh) - var(--axis-thickness) / 2);
+  top: calc(var(--mouse-y, 50dvh) - var(--axis-thickness) / 2);
   background-repeat: repeat; background-size: auto 100%;
 }
 
@@ -531,7 +530,7 @@ html {
 /* Arriba: centro → arriba */
 #mouse-axes .v-top{
   top: 0;
-  bottom: calc(100vh - var(--mouse-y, 50vh));
+  bottom: calc(100vh - var(--mouse-y, 50dvh));
   background-image: repeating-linear-gradient(
     to top,
     var(--rose-clay) 0 var(--axis-dash),
@@ -542,7 +541,7 @@ html {
 
 /* Abajo: centro → abajo */
 #mouse-axes .v-bottom{
-  top: var(--mouse-y, 50vh);
+  top: var(--mouse-y, 50dvh);
   bottom: 0;
   background-image: repeating-linear-gradient(
     to bottom,
@@ -550,4 +549,10 @@ html {
     transparent 0 calc(var(--axis-dash) + var(--axis-gap))
   );
   background-position: 50% var(--axis-phase-y);
+}
+
+/* Desactiva el pan del navegador SOLO mientras arrastras el canvas */
+body.dragging #canvas {
+  touch-action: none;
+  overscroll-behavior: contain;
 }

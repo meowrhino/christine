@@ -57,6 +57,7 @@ function renderizarSelectoresEjes() {
     }
     renderizarSelectoresEjes();
     renderizarItems();
+    generateCardinalArrows();
   };
   selectY.onchange = function () {
     ejeY = selectY.value;
@@ -65,6 +66,7 @@ function renderizarSelectoresEjes() {
     }
     renderizarSelectoresEjes();
     renderizarItems();
+    generateCardinalArrows();
   };
 }
 
@@ -191,9 +193,28 @@ document.getElementById("popup").onclick = (e) => {
 window.onload = async function () {
   await cargarItems();
   renderizarItems();
-  
+
   generateCardinalArrows();
-  showLastClickedAsTarget();          // ← radar y target central, nombre más claro
+  showLastClickedAsTarget();          // radar y target central
+
+  // — móvil/ptr — desactiva pan del navegador SOLO mientras se arrastra sobre el canvas
+  const canvas = document.getElementById('canvas');
+  if (canvas && window.PointerEvent) {
+    const startDrag = () => {
+      document.body.classList.add('dragging');
+      canvas.style.touchAction = 'none';
+      canvas.style.overscrollBehavior = 'contain';
+    };
+    const endDrag = () => {
+      document.body.classList.remove('dragging');
+      canvas.style.touchAction = '';
+      canvas.style.overscrollBehavior = '';
+    };
+    canvas.addEventListener('pointerdown', startDrag);
+    window.addEventListener('pointerup', endDrag);
+    window.addEventListener('pointercancel', endDrag);
+  }
+
   centrarScroll(true);   // Scroll inmediato al centro
   setTimeout(() => centrarScroll(false), 350); // Luego animación suave
 };
@@ -285,16 +306,32 @@ function generateCardinalArrows() {
 
 // --- Radar y Target Central ---
 function showLastClickedAsTarget(){
-  const c = document.getElementById("axis-center");
-  if (!c) return;
+  // Garantiza que exista #axis-center
+  let c = document.getElementById("axis-center");
+  if (!c) {
+    c = document.createElement("div");
+    c.id = "axis-center";
+    document.body.appendChild(c);
+  }
 
+  // Hover (desktop)
   c.addEventListener('mouseenter', () => document.body.classList.add('radar-active'));
   c.addEventListener('mouseleave', () => document.body.classList.remove('radar-active'));
 
-  // click / pointer sobre el centro: activa radar (desktop y táctil moderno)
+  // Click / tap directamente sobre el centro
   c.addEventListener('pointerdown', () => {
     document.body.classList.add('radar-active');
     setTimeout(() => document.body.classList.remove('radar-active'), 1400);
+  });
+
+  // Tap/click cerca del centro también dispara (más fácil en móvil)
+  window.addEventListener('pointerdown', (e) => {
+    const cx = window.innerWidth / 2, cy = window.innerHeight / 2;
+    const hit = Math.max(Math.abs(e.clientX - cx), Math.abs(e.clientY - cy)) <= 24; // tolerancia
+    if (hit) {
+      document.body.classList.add('radar-active');
+      setTimeout(() => document.body.classList.remove('radar-active'), 1400);
+    }
   });
 }
 
@@ -339,4 +376,3 @@ function showLastClickedAsTarget(){
   // inicial: centro (por si no hay movimiento aún)
   onMove(window.innerWidth / 2, window.innerHeight / 2);
 })();
-
