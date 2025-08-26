@@ -193,7 +193,8 @@ window.onload = async function () {
   renderizarItems();
   
   generateCardinalArrows();
-centrarScroll(true);   // Scroll inmediato al centro
+  showLastClickedAsTarget();          // ← radar y target central, nombre más claro
+  centrarScroll(true);   // Scroll inmediato al centro
   setTimeout(() => centrarScroll(false), 350); // Luego animación suave
 };
 
@@ -282,6 +283,21 @@ function generateCardinalArrows() {
   setSlotImg("slot-bottom", "bottom", normalizePole(bottomLabel));
 }
 
+// --- Radar y Target Central ---
+function showLastClickedAsTarget(){
+  const c = document.getElementById("axis-center");
+  if (!c) return;
+
+  c.addEventListener('mouseenter', () => document.body.classList.add('radar-active'));
+  c.addEventListener('mouseleave', () => document.body.classList.remove('radar-active'));
+
+  // click / pointer sobre el centro: activa radar (desktop y táctil moderno)
+  c.addEventListener('pointerdown', () => {
+    document.body.classList.add('radar-active');
+    setTimeout(() => document.body.classList.remove('radar-active'), 1400);
+  });
+}
+
 // === Mouse Axes (actualiza --mouse-x / --mouse-y en tiempo real) ===
 (() => {
   const rootStyle = document.documentElement.style;
@@ -303,8 +319,19 @@ function generateCardinalArrows() {
   // ratón
   window.addEventListener('mousemove', (e) => onMove(e.clientX, e.clientY), { passive: true });
 
+  // pointer (unificado: ratón, lápiz, touch)
+  if (window.PointerEvent) {
+    window.addEventListener('pointermove', (e) => onMove(e.clientX, e.clientY), { passive: true });
+    window.addEventListener('pointerdown', (e) => onMove(e.clientX, e.clientY), { passive: true });
+  }
+
   // táctil
   window.addEventListener('touchmove', (e) => {
+    const t = e.touches && e.touches[0];
+    if (t) onMove(t.clientX, t.clientY);
+  }, { passive: true });
+
+  window.addEventListener('touchstart', (e) => {
     const t = e.touches && e.touches[0];
     if (t) onMove(t.clientX, t.clientY);
   }, { passive: true });
@@ -312,3 +339,4 @@ function generateCardinalArrows() {
   // inicial: centro (por si no hay movimiento aún)
   onMove(window.innerWidth / 2, window.innerHeight / 2);
 })();
+

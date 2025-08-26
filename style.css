@@ -19,6 +19,12 @@
   --axis-phase-x: -8px;    /* offset desde el centro para X */
   --axis-phase-y: -8px;    /* offset desde el centro para Y */
 
+  /* Radar pulse */
+  --radar-color: var(--rose-clay);
+  --radar-stroke: 2px;
+  --radar-duration: 1400ms;
+  --radar-delay: 500ms; /* segunda onda, desfasada */
+
 
     /* mouse-axes (rose-clay) */
   
@@ -53,6 +59,7 @@ body {
 
   display: flex;
   align-items: center;
+  
 }
 
 /* Marco de márgenes menta que centra el canvas */
@@ -81,6 +88,43 @@ body {
   overflow: auto;
 
   background: var(--slate-warm);
+}
+
+/* ============================
+   Radar (desde el centro)
+   ============================ */
+#canvas::before,
+#canvas::after{
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 100%;
+  height: 100%;
+  transform: translate(-50%, -50%) scale(0.05);
+  border: var(--radar-stroke) solid var(--radar-color);
+  border-radius: 50%;
+  opacity: 0;
+  pointer-events: none;
+  z-index: 0; /* por debajo de .item (z=1), por encima del fondo */
+}
+
+@keyframes radarPulse {
+  0%   { transform: translate(-50%, -50%) scale(0.05); opacity: 0; }
+  10%  { opacity: .7; }
+  100% { transform: translate(-50%, -50%) scale(1);   opacity: 0; }
+}
+
+/* Activación sólo cuando el puntero está sobre la cruz central.
+   Soporte moderno con :has() + fallback via .radar-active en <body> */
+body:has(#axis-center:hover) #canvas::before,
+body.radar-active #canvas::before {
+  animation: radarPulse var(--radar-duration) ease-out infinite;
+}
+body:has(#axis-center:hover) #canvas::after,
+body.radar-active #canvas::after {
+  animation: radarPulse var(--radar-duration) ease-out infinite;
+  animation-delay: var(--radar-delay);
 }
 
 body,
@@ -181,10 +225,6 @@ html {
     transparent 0 calc(var(--axis-dash) + var(--axis-gap))
   );
   background-position: 50% var(--axis-phase-y);
-}
-
-#axis-x,
-#axis-y {
 }
 
 /* Visual indicator for the center of the axes */
