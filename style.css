@@ -19,6 +19,11 @@
   --axis-phase-x: -8px;    /* offset desde el centro para X */
   --axis-phase-y: -8px;    /* offset desde el centro para Y */
 
+
+    /* mouse-axes (rose-clay) */
+  
+
+  
   --content-h: calc(
     100dvh - (var(--frame-v) * 2)
   ); /* alto útil = 100dvh - 2*frame-v */
@@ -435,4 +440,74 @@ html {
 }
 .slot-bottom .cardinal-img {
   transform: translateY(var(--edge-bottom-gap));
+}
+
+
+/* Ejes “desde el ratón”: cuatro mitades naciendo del punto (x,y) */
+#mouse-axes{
+  position: fixed; inset: 0; z-index: 2; pointer-events: none;
+}
+
+/* Horizontales: una a la izq, otra a la dcha */
+#mouse-axes .h-left,
+#mouse-axes .h-right{
+  position: absolute; height: var(--axis-thickness);
+  top: calc(var(--mouse-y, 50vh) - var(--axis-thickness) / 2);
+  background-repeat: repeat; background-size: auto 100%;
+}
+
+/* Izquierda: centro → izquierda */
+#mouse-axes .h-left{
+  left: 0;
+  right: calc(100vw - var(--mouse-x, 50vw));
+  background-image: repeating-linear-gradient(
+    to left,
+    var(--rose-clay) 0 var(--axis-dash),
+    transparent 0 calc(var(--axis-dash) + var(--axis-gap))
+  );
+  background-position: calc(100% - var(--axis-phase-x)) 50%;
+}
+
+/* Derecha: centro → derecha */
+#mouse-axes .h-right{
+  left: var(--mouse-x, 50vw);
+  right: 0;
+  background-image: repeating-linear-gradient(
+    to right,
+    var(--rose-clay) 0 var(--axis-dash),
+    transparent 0 calc(var(--axis-dash) + var(--axis-gap))
+  );
+  background-position: var(--axis-phase-x) 50%;
+}
+
+/* Verticales: una arriba, otra abajo */
+#mouse-axes .v-top,
+#mouse-axes .v-bottom{
+  position: absolute; width: var(--axis-thickness);
+  left: calc(var(--mouse-x, 50vw) - var(--axis-thickness) / 2);
+  background-repeat: repeat; background-size: 100% auto;
+}
+
+/* Arriba: centro → arriba */
+#mouse-axes .v-top{
+  top: 0;
+  bottom: calc(100vh - var(--mouse-y, 50vh));
+  background-image: repeating-linear-gradient(
+    to top,
+    var(--rose-clay) 0 var(--axis-dash),
+    transparent 0 calc(var(--axis-dash) + var(--axis-gap))
+  );
+  background-position: 50% calc(100% - var(--axis-phase-y));
+}
+
+/* Abajo: centro → abajo */
+#mouse-axes .v-bottom{
+  top: var(--mouse-y, 50vh);
+  bottom: 0;
+  background-image: repeating-linear-gradient(
+    to bottom,
+    var(--rose-clay) 0 var(--axis-dash),
+    transparent 0 calc(var(--axis-dash) + var(--axis-gap))
+  );
+  background-position: 50% var(--axis-phase-y);
 }

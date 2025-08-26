@@ -281,3 +281,34 @@ function generateCardinalArrows() {
   setSlotImg("slot-top",    "top",    normalizePole(topLabel));
   setSlotImg("slot-bottom", "bottom", normalizePole(bottomLabel));
 }
+
+// === Mouse Axes (actualiza --mouse-x / --mouse-y en tiempo real) ===
+(() => {
+  const rootStyle = document.documentElement.style;
+  let px = null, py = null, raf = 0;
+
+  function commit() {
+    raf = 0;
+    if (px == null || py == null) return;
+    rootStyle.setProperty('--mouse-x', px + 'px');
+    rootStyle.setProperty('--mouse-y', py + 'px');
+  }
+
+  function onMove(clientX, clientY) {
+    px = Math.max(0, Math.min(window.innerWidth,  clientX));
+    py = Math.max(0, Math.min(window.innerHeight, clientY));
+    if (!raf) raf = requestAnimationFrame(commit);
+  }
+
+  // ratón
+  window.addEventListener('mousemove', (e) => onMove(e.clientX, e.clientY), { passive: true });
+
+  // táctil
+  window.addEventListener('touchmove', (e) => {
+    const t = e.touches && e.touches[0];
+    if (t) onMove(t.clientX, t.clientY);
+  }, { passive: true });
+
+  // inicial: centro (por si no hay movimiento aún)
+  onMove(window.innerWidth / 2, window.innerHeight / 2);
+})();
