@@ -6,6 +6,13 @@
   /* Tamaño de arrows (control central) */
   --edge-nudge: 0px; /* microajuste para pegar a sangre (0–2px) */
 
+  /*margenes de colores*/
+  --frame-v: 5dvh; /* margen vertical top/bottom */
+  --frame-h: 2.5dvw; /* margen horizontal left/right */
+
+  --content-h: calc(100dvh - (var(--frame-v) * 2)); /* alto útil = 100dvh - 2*frame-v */
+  --content-w: calc(100dvw - (var(--frame-h) * 2)); /* ancho útil = 100dvw - 2*frame-h */
+
   /* Paleta utilitaria */
   --mint-apple: #c9ff7f; /* acento menta */
   --slate-warm: #686369; /* gris pizarra cálido */
@@ -23,8 +30,24 @@ body {
   margin: 0;
   padding: 0;
   font-family: Arial, sans-serif;
-  background-color: #f8f8f8;
+  background: var(--rose-clay);
   overflow: auto;
+
+  display: flex;
+  align-items: center;
+}
+
+/* Marco de márgenes menta que centra el canvas */
+#margenes-menta {
+  position: relative;
+  width: 100dvw;
+  height: var(--content-h);
+  background: var(--mint-apple); /* menta */
+  padding: 0px; /* 5dvh y 2.5dvw */
+  box-sizing: border-box;
+
+  display: flex;
+  justify-content: center; /* padding no suma tamaño */
 }
 
 /* ============================
@@ -32,12 +55,14 @@ body {
    ============================ */
 #canvas {
   position: relative;
-  width: 100dvw;
-  height: 100dvh;
+  width: var(--content-w);
+  height: 100%;
   /* min-width: 100vw;
   min-height: 100vh; */
   /* background: #f8f8f8; */
   overflow: auto;
+
+  background: var(--slate-warm);
 }
 
 body,
@@ -75,8 +100,8 @@ html {
   width: 2px;
 }
 
-#axis-x, axis-y {
-  
+#axis-x,
+axis-y {
 }
 
 /* Visual indicator for the center of the axes */
@@ -253,6 +278,11 @@ html {
     width: 100dvw;
     height: 100dvh;
   } */
+
+  :root {
+      --content-h: calc(100dvh - (var(--frame-v))); 
+  --content-w: calc(100dvw - (var(--frame-h)));
+  }
 
   /* Ítems un poco más pequeños, proporcionales */
   .item {

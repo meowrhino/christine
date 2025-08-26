@@ -214,3 +214,6 @@ vale y me gustaria que el axis-x y el axis-y fuesen una linea dotted de color mi
 #axis-x, axis-y {
   line: dotted mint green 
 }
+
+
+// cuando añado el margenes menta peta un poco todo! 
