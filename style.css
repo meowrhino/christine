@@ -1,3 +1,12 @@
+/* Fuente solo para el menú (archivo en el root junto a style.css) */
+@font-face {
+  font-family: "CooperHewitt-Heavy";
+  src: url("cooper-hewitt.heavy.otf") format("opentype");
+  font-weight: 800;
+  font-style: normal;
+  font-display: swap;
+}
+
 :root {
   /* Cardinal sizes by axis */
   --cardinal-width-x: clamp(60px, 10vw, 120px);
@@ -331,19 +340,42 @@ html {
 /* ============================
    Menu Styles
    ============================ */
+/* === Menu (barra = frame-v; márgenes laterales = frame-h) === */
 #menu {
   position: fixed;
-  bottom: 10px;
-  right: 10px;
-  background: #333;
-  padding: 10px;
-  color: white;
+  bottom: 0;
+  left: var(--frame-h);
+  right: var(--frame-h);
+  height: var(--frame-v);
+  display: flex;
+  align-items: center;
+  justify-content: space-between; /* un select a cada extremo */
   z-index: var(--z-nav);
 }
 
+/* Selects: fondo negro, texto menta, Cooper Hewitt */
 .eje-selector {
-  margin: 5px 0;
+  appearance: none;
+  background: #000;
+  color: var(--mint-apple); /* tu menta ya definida en :root */
+  height: 100%;
+  font-family: "CooperHewitt-Heavy", system-ui, -apple-system, Segoe UI, Roboto,
+    Arial, sans-serif;
+  font-weight: 800;
+  text-transform: uppercase;
+  font-size: 100%;
   cursor: pointer;
+}
+
+/* Desplegable (lo que permita el UA) */
+.eje-selector option {
+  background: #000;
+  color: var(--mint-apple);
+}
+
+/* Si quedaran <label>, se ocultan por compatibilidad */
+#menu label {
+  display: none;
 }
 
 /* === 8) Popup === */
