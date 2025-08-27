@@ -106,16 +106,11 @@ function renderizarItems() {
       div.style.setProperty("--item-bg", item.colorFondo);
     }
 
-    // Contenido
+    // Contenido (solo imagen por id)
     const img = document.createElement("img");
-    img.src = item.imagen;
+    img.src = `img/_items/${item.id}.png`;
     img.alt = item.titulo || "";
     div.appendChild(img);
-
-    const tituloDiv = document.createElement("div");
-    tituloDiv.className = "item-titulo";
-    tituloDiv.textContent = item.titulo || "";
-    div.appendChild(tituloDiv);
 
     // Añadir al DOM ANTES de medir
     canvas.appendChild(div);
@@ -145,11 +140,11 @@ function renderizarItems() {
     };
   });
 
-  // Efectos hover
+  // Efectos hover (±15º de rotación, leve zoom)
   canvas.querySelectorAll(".item").forEach((item) => {
     item.addEventListener("mouseenter", () => {
-      const randomRotate = Math.random() * 6 - 3; // de -3° a +3°
-      const randomScale = 1 + Math.random() * 0.1; // de 1 a 1.1
+      const randomRotate = Math.random() * 30 - 15; // de -15° a +15°
+      const randomScale  = 1 + Math.random() * 0.10; // leve zoom
       item.style.transform = `scale(${randomScale.toFixed(2)}) rotate(${randomRotate.toFixed(2)}deg)`;
     });
     item.addEventListener("mouseleave", () => {
@@ -167,7 +162,13 @@ function mostrarPopup(item) {
     .map((p) => `<p>${p}</p>`)
     .join("");
   const popupImg = document.getElementById("popup-imagen");
-  popupImg.src = item.imagen || item.miniatura || "";
+  popupImg.src = `img/_items/${item.id}.png`;
+  // Fallback por si el archivo con id no existe
+  popupImg.onerror = () => {
+    if (item.imagen || item.miniatura) {
+      popupImg.src = item.imagen || item.miniatura;
+    }
+  };
   popupImg.style.objectFit = "contain";
   popupImg.style.maxWidth = "95%";
   popupImg.style.maxHeight = "40vh";

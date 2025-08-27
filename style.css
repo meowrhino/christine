@@ -44,15 +44,15 @@
   --ink: #000000; /* texto/contornos */
 
   /* Z order (bottom → top) */
-  --z-margins: 1;       /* #margenes-menta (no usar z-index en el contenedor) */
-  --z-mouse-axes: 2;    /* #mouse-axes */
-  --z-canvas: 3;        /* #canvas */
-  --z-axes: 4;          /* ejes centrales dentro del canvas */
-  --z-items: 5;         /* items */
-  --z-cardinal: 6;      /* flechas cardinales */
-  --z-nav: 7;           /* navegación/botones */
-  --z-popup: 8;         /* overlay popup */
-  --z-modal: 9999;      /* modal imagen grande */
+  --z-margins: 1; /* #margenes-menta (no usar z-index en el contenedor) */
+  --z-mouse-axes: 2; /* #mouse-axes */
+  --z-canvas: 3; /* #canvas */
+  --z-axes: 4; /* ejes centrales dentro del canvas */
+  --z-items: 5; /* items */
+  --z-cardinal: 6; /* flechas cardinales */
+  --z-nav: 7; /* navegación/botones */
+  --z-popup: 8; /* overlay popup */
+  --z-modal: 9999; /* modal imagen grande */
 }
 
 /* ============================
@@ -162,7 +162,6 @@ html {
   pointer-events: none; /* no bloquear clics */
 }
 
-
 #axis-x {
   left: 0;
   right: 0;
@@ -244,9 +243,12 @@ html {
 }
 
 /* Aseguramos z-index bajo para ejes y sus pseudo-elementos dentro del canvas */
-#axis-x, #axis-y,
-#axis-x::before, #axis-x::after,
-#axis-y::before, #axis-y::after {
+#axis-x,
+#axis-y,
+#axis-x::before,
+#axis-x::after,
+#axis-y::before,
+#axis-y::after {
   z-index: var(--z-axes);
 }
 
@@ -269,65 +271,30 @@ html {
 /* Ítem visual y modular        */
 /* ============================ */
 .item {
-  width: 8dvw;
-  height: 8dvh;
-
   position: absolute;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: flex-start;
-
-  transition: transform 0.33s cubic-bezier(0.35, 1.7, 0.43, 0.81),
-    box-shadow 0.28s cubic-bezier(0.2, 0.9, 0.35, 1.4), background 0.22s;
+  display: block;
+  transform-origin: 50% 50%;
+  transition: transform 0.33s cubic-bezier(0.35, 1.7, 0.43, 0.81);
   overflow: visible;
-
-  /*
-  max-width: 180px;
-  max-height: 180px;
-  */
-
   z-index: var(--z-items);
+  pointer-events: auto;
 }
 
 .item img {
-  width: 100%;
-  height: 80%;
+  display: block;
+  width: auto;
+  height: auto;
+  /* límites responsivos para que no sea ni enano en móvil ni gigante en desktop */
+  max-width: clamp(120px, 18dvw, 520px);
+  max-height: clamp(80px, 26dvh, 320px);
   object-fit: contain;
-  border-radius: 12px 12px 0 0;
-}
-/* 
-.item:hover {
-  transform: scale(1.09) rotate(-1deg);
-  /* box-shadow: 0 12px 40px 0 rgba(56,72,168,0.14), 0 2px 4px #d8d8fa; 
-
-} lo hemos pasado al document.querySelectorAll(.item) del js!*/
-
-.item-inicial {
-  width: 100%;
-  height: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 3.5dvw;
-
-  color: #7e7abb;
-  background: linear-gradient(120deg, #e6eaff 70%, #e9e4fc 100%);
-  font-weight: 700;
-  border-radius: 9px;
+  /* sombra hacia arriba + izquierda, negra y difuminada */
+  filter: drop-shadow(-12px -12px 20px rgba(0,0,0,0.35));
+  pointer-events: none;      /* el click lo gestiona el contenedor .item */
   user-select: none;
-  letter-spacing: -0.04em;
+  -webkit-user-drag: none;
 }
 
-.item-titulo {
-  font-size: 1.16dvw;
-
-  color: #2d2c51;
-
-  border-radius: 4px;
-  margin-top: 4px;
-  text-align: center;
-}
 /* ============================
    Menu Styles
    ============================ */
@@ -337,7 +304,6 @@ html {
   right: 10px;
   background: #333;
   padding: 10px;
-  border-radius: 5px;
   color: white;
   z-index: var(--z-nav);
 }
@@ -430,19 +396,14 @@ html {
     --content-w: calc(100dvw - (var(--frame-h)));
   } */
 
-  /* Ítems un poco más pequeños, proporcionales */
-  .item {
-    width: clamp(48px, 10vw, 72px);
-    height: clamp(64px, 12vh, 96px);
-  }
   .item img {
-    width: 100%;
-    height: 70%;
-  }
-
-  /* Título más pequeño */
-  .item-titulo {
-    font-size: clamp(11px, 3.2vw, 14px);
+    display: block;
+    width: auto;
+    height: auto;
+    max-width: clamp(96px, 44vw, 320px);
+    max-height: clamp(72px, 34vh, 240px);
+    object-fit: contain;
+    filter: drop-shadow(-12px -12px 20px rgba(0,0,0,0.35));
   }
 }
 
