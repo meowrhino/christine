@@ -76,7 +76,7 @@ body {
   font-family: Arial, sans-serif;
   background: var(--rose-clay);
   overflow: hidden; /* fallback */
-  overflow: clip;   /* crop global en el viewport (mejor que hidden) */
+  overflow: clip; /* crop global en el viewport (mejor que hidden) */
 
   display: flex;
   align-items: center;
@@ -145,6 +145,15 @@ body {
     transform: translate(-50%, -50%) scale(1);
     opacity: 0;
   }
+}
+
+/* Fade-out suave: una última iteración y se apaga */
+body.radar-fade #canvas::before {
+  animation: radarPulse var(--radar-duration) ease-out 1;
+}
+body.radar-fade #canvas::after {
+  animation: radarPulse var(--radar-duration) ease-out 1;
+  animation-delay: var(--radar-delay);
 }
 
 /* Activación sólo cuando el puntero está sobre la cruz central.

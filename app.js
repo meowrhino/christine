@@ -3,6 +3,8 @@ let ejes = [];
 let ejeX = "";
 let ejeY = "";
 
+let radarFadeTimer = null; // controla el fade-out del radar
+
 // Carga los ítems y ejes, y pinta el canvas
 async function cargarItems() {
   const respuesta = await fetch("items.json");
@@ -87,6 +89,17 @@ function mapToCanvas(val, min, max, size) {
   return ((val - min) / (max - min)) * size;
 }
 
+// Programa un "fade-out" suave del radar: quita la animación infinita,
+// lanza 1 pulso final y limpia la clase tras ~1.8s (duración+delay).
+function scheduleRadarFade() {
+  document.body.classList.remove("radar-active");
+  document.body.classList.add("radar-fade");
+  clearTimeout(radarFadeTimer);
+  radarFadeTimer = setTimeout(() => {
+    document.body.classList.remove("radar-fade");
+  }, 1800); // ≈ var(--radar-duration 1400ms) + var(--radar-delay 400ms)
+}
+
 // Ángulo aleatorio en rango [-max,+max]
 function randomAngle(max = 15) {
   return Math.random() * (max * 2) - max;
@@ -127,12 +140,12 @@ function renderizarItems() {
 
     // Función de posicionamiento (reutilizable tras load)
     function position() {
-      const w = div.offsetWidth  || img.naturalWidth  || 80;
+      const w = div.offsetWidth || img.naturalWidth || 80;
       const h = div.offsetHeight || img.naturalHeight || 80;
-      const x = mapToCanvas(item.ejes[ejeX], -12, 12, canvasW) - (w / 2);
-      const y = mapToCanvas(item.ejes[ejeY], -12, 12, canvasH) - (h / 2);
+      const x = mapToCanvas(item.ejes[ejeX], -12, 12, canvasW) - w / 2;
+      const y = mapToCanvas(item.ejes[ejeY], -12, 12, canvasH) - h / 2;
       div.style.left = `${x}px`;
-      div.style.top  = `${y}px`;
+      div.style.top = `${y}px`;
     }
 
     // Posición inicial (puede refinarse tras cargar la imagen)
@@ -175,7 +188,9 @@ function mostrarPopup(item) {
   const popup = document.getElementById("popup");
   popup.classList.remove("oculto");
   document.getElementById("popup-titulo").textContent = item.titulo;
-  document.getElementById("popup-descripcion").innerHTML = (item.descripcion || [])
+  document.getElementById("popup-descripcion").innerHTML = (
+    item.descripcion || []
+  )
     .map((p) => `<p>${p}</p>`)
     .join("");
   const popupImg = document.getElementById("popup-imagen");
@@ -220,27 +235,27 @@ window.onload = async function () {
   renderizarItems();
 
   generateCardinalArrows();
-  showLastClickedAsTarget();          // radar y target central
+  showLastClickedAsTarget(); // radar y target central
 
   // — móvil/ptr — desactiva pan del navegador SOLO mientras se arrastra sobre el canvas
-  const canvas = document.getElementById('canvas');
+  const canvas = document.getElementById("canvas");
   if (canvas && window.PointerEvent) {
     const startDrag = () => {
-      document.body.classList.add('dragging');
-      canvas.style.touchAction = 'none';
-      canvas.style.overscrollBehavior = 'contain';
+      document.body.classList.add("dragging");
+      canvas.style.touchAction = "none";
+      canvas.style.overscrollBehavior = "contain";
     };
     const endDrag = () => {
-      document.body.classList.remove('dragging');
-      canvas.style.touchAction = '';
-      canvas.style.overscrollBehavior = '';
+      document.body.classList.remove("dragging");
+      canvas.style.touchAction = "";
+      canvas.style.overscrollBehavior = "";
     };
-    canvas.addEventListener('pointerdown', startDrag);
-    window.addEventListener('pointerup', endDrag);
-    window.addEventListener('pointercancel', endDrag);
+    canvas.addEventListener("pointerdown", startDrag);
+    window.addEventListener("pointerup", endDrag);
+    window.addEventListener("pointercancel", endDrag);
   }
 
-  centrarScroll(true);   // Scroll inmediato al centro
+  centrarScroll(true); // Scroll inmediato al centro
   setTimeout(() => centrarScroll(false), 350); // Luego animación suave
 };
 
@@ -257,15 +272,18 @@ function centrarScroll(forceAuto = false) {
   function intentar() {
     // Calcula el centro absoluto del canvas (por si el canvas no empieza en 0,0)
     const rect = canvas.getBoundingClientRect();
-    const scrollLeft = window.pageXOffset || document.documentElement.scrollLeft;
+    const scrollLeft =
+      window.pageXOffset || document.documentElement.scrollLeft;
     const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
-    const centerX = canvas.offsetLeft + canvas.offsetWidth / 2 - window.innerWidth / 2;
-    const centerY = canvas.offsetTop + canvas.offsetHeight / 2 - window.innerHeight / 2;
+    const centerX =
+      canvas.offsetLeft + canvas.offsetWidth / 2 - window.innerWidth / 2;
+    const centerY =
+      canvas.offsetTop + canvas.offsetHeight / 2 - window.innerHeight / 2;
 
     window.scrollTo({
       left: centerX,
       top: centerY,
-      behavior: forceAuto ? "auto" : "smooth"
+      behavior: forceAuto ? "auto" : "smooth",
     });
     intentos++;
     if (intentos < 14) setTimeout(intentar, 130);
@@ -279,7 +297,7 @@ function mostrarPopupGrande(src) {
   if (!modal) {
     modal = document.createElement("div");
     modal.id = "modal-img-grande";
-    modal.onclick = function(e) {
+    modal.onclick = function (e) {
       if (e.target === modal) modal.remove();
     };
     document.body.appendChild(modal);
@@ -320,17 +338,17 @@ function setSlotImg(slotId, side, poleName) {
  *                             bottom = INFERIOR (positivos)
  */
 function generateCardinalArrows() {
-  const [leftLabel, rightLabel]  = String(ejeX).split("/");
-  const [topLabel,  bottomLabel] = String(ejeY).split("/");
+  const [leftLabel, rightLabel] = String(ejeX).split("/");
+  const [topLabel, bottomLabel] = String(ejeY).split("/");
 
-  setSlotImg("slot-left",   "left",   normalizePole(leftLabel));
-  setSlotImg("slot-right",  "right",  normalizePole(rightLabel));
-  setSlotImg("slot-top",    "top",    normalizePole(topLabel));
+  setSlotImg("slot-left", "left", normalizePole(leftLabel));
+  setSlotImg("slot-right", "right", normalizePole(rightLabel));
+  setSlotImg("slot-top", "top", normalizePole(topLabel));
   setSlotImg("slot-bottom", "bottom", normalizePole(bottomLabel));
 }
 
 // --- Radar y Target Central ---
-function showLastClickedAsTarget(){
+function showLastClickedAsTarget() {
   // Garantiza que exista #axis-center dentro del canvas
   let c = document.getElementById("axis-center");
   if (!c) {
@@ -342,23 +360,37 @@ function showLastClickedAsTarget(){
     __canvasForCenter.appendChild(c);
   }
 
-  // Hover (desktop)
-  c.addEventListener('mouseenter', () => document.body.classList.add('radar-active'));
-  c.addEventListener('mouseleave', () => document.body.classList.remove('radar-active'));
+  // Hover (desktop) con fade-out suave al salir
+  c.addEventListener("mouseenter", () => {
+    clearTimeout(radarFadeTimer);
+    document.body.classList.remove("radar-fade");
+    document.body.classList.add("radar-active");
+  });
+  c.addEventListener("mouseleave", () => {
+    scheduleRadarFade();
+  });
 
-  // Click / tap directamente sobre el centro
-  c.addEventListener('pointerdown', () => {
-    document.body.classList.add('radar-active');
-    setTimeout(() => document.body.classList.remove('radar-active'), 1400);
+  // Click / tap directamente sobre el centro (mantiene activo 3s y luego fade)
+  c.addEventListener("pointerdown", () => {
+    clearTimeout(radarFadeTimer);
+    document.body.classList.remove("radar-fade");
+    document.body.classList.add("radar-active");
+    setTimeout(() => {
+      scheduleRadarFade();
+    }, 3000);
   });
 
   // Tap/click cerca del centro también dispara (más fácil en móvil)
-  window.addEventListener('pointerdown', (e) => {
+  window.addEventListener("pointerdown", (e) => {
     const cx = window.innerWidth / 2, cy = window.innerHeight / 2;
     const hit = Math.max(Math.abs(e.clientX - cx), Math.abs(e.clientY - cy)) <= 24; // tolerancia
     if (hit) {
-      document.body.classList.add('radar-active');
-      setTimeout(() => document.body.classList.remove('radar-active'), 1400);
+      clearTimeout(radarFadeTimer);
+      document.body.classList.remove("radar-fade");
+      document.body.classList.add("radar-active");
+      setTimeout(() => {
+        scheduleRadarFade();
+      }, 3000);
     }
   });
 }
