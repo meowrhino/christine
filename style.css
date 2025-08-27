@@ -75,7 +75,8 @@ body {
   padding: 0;
   font-family: Arial, sans-serif;
   background: var(--rose-clay);
-  overflow: hidden; /* evitar scroll del body */
+  overflow: hidden; /* fallback */
+  overflow: clip;   /* crop global en el viewport (mejor que hidden) */
 
   display: flex;
   align-items: center;
@@ -90,7 +91,7 @@ body {
   background: var(--mint-apple); /* menta */
   padding: 0px; /* 5dvh y 2.5dvw */
   box-sizing: border-box;
-  overflow: clip; /* evita que items fuera rompan el layout (especialmente en móvil) */
+  /* OJO: el recorte ahora lo hace <body>, aquí dejamos el overflow libre */
 
   display: flex;
   justify-content: center; /* padding no suma tamaño */
