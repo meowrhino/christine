@@ -12,12 +12,12 @@
   --frame-v: 5dvh; /* margen vertical top/bottom */
   --frame-h: 2.5dvw; /* margen horizontal left/right */
 
-  --axis-thickness: 2px;  /* grosor de la línea */
-  --axis-dash: 16px;      /* largo de cada dash */
-  --axis-gap: 12px;       /* separación entre dashes */
+  --axis-thickness: 2px; /* grosor de la línea */
+  --axis-dash: 16px; /* largo de cada dash */
+  --axis-gap: 12px; /* separación entre dashes */
 
-  --axis-phase-x: -8px;    /* offset desde el centro para X */
-  --axis-phase-y: -8px;    /* offset desde el centro para Y */
+  --axis-phase-x: -8px; /* offset desde el centro para X */
+  --axis-phase-y: -8px; /* offset desde el centro para Y */
 
   /* Radar pulse */
   --radar-color: var(--mint-apple);
@@ -25,11 +25,8 @@
   --radar-duration: 1400ms;
   --radar-delay: 500ms; /* segunda onda, desfasada */
 
+  /* mouse-axes (rose-clay) */
 
-    /* mouse-axes (rose-clay) */
-  
-
-  
   --content-h: calc(
     100dvh - (var(--frame-v) * 2)
   ); /* alto útil = 100dvh - 2*frame-v */
@@ -45,6 +42,17 @@
   --aqua: #00ffff; /* cian de énfasis */
   --royal-blue: #0000ff; /* azul intenso */
   --ink: #000000; /* texto/contornos */
+
+  /* Z order (bottom → top) */
+  --z-margins: 1;       /* #margenes-menta (no usar z-index en el contenedor) */
+  --z-mouse-axes: 2;    /* #mouse-axes */
+  --z-canvas: 3;        /* #canvas */
+  --z-axes: 4;          /* ejes centrales dentro del canvas */
+  --z-items: 5;         /* items */
+  --z-cardinal: 6;      /* flechas cardinales */
+  --z-nav: 7;           /* navegación/botones */
+  --z-popup: 8;         /* overlay popup */
+  --z-modal: 9999;      /* modal imagen grande */
 }
 
 /* ============================
@@ -55,7 +63,7 @@ body {
   padding: 0;
   font-family: Arial, sans-serif;
   background: var(--rose-clay);
-  overflow: auto;
+  overflow: hidden; /* evitar scroll del body */
 
   display: flex;
   align-items: center;
@@ -84,16 +92,17 @@ body {
   /* min-width: 100vw;
   min-height: 100vh; */
   /* background: #f8f8f8; */
-  overflow: auto;
+  /* overflow: clip; */
 
   background: var(--slate-warm);
+  z-index: var(--z-canvas);
 }
 
 /* ============================
    Radar (desde el centro)
    ============================ */
 #canvas::before,
-#canvas::after{
+#canvas::after {
   content: "";
   position: absolute;
   top: 50%;
@@ -109,9 +118,17 @@ body {
 }
 
 @keyframes radarPulse {
-  0%   { transform: translate(-50%, -50%) scale(0.05); opacity: 0; }
-  10%  { opacity: .7; }
-  100% { transform: translate(-50%, -50%) scale(1);   opacity: 0; }
+  0% {
+    transform: translate(-50%, -50%) scale(0.05);
+    opacity: 0;
+  }
+  10% {
+    opacity: 0.7;
+  }
+  100% {
+    transform: translate(-50%, -50%) scale(1);
+    opacity: 0;
+  }
 }
 
 /* Activación sólo cuando el puntero está sobre la cruz central.
@@ -130,7 +147,6 @@ body,
 html {
   width: 100dvw;
   height: 100dvh;
-  overflow: auto;
 }
 
 /* ============================
@@ -142,9 +158,10 @@ html {
 */
 .axis {
   position: absolute;
-  z-index: 1;
+  z-index: var(--z-axes);
   pointer-events: none; /* no bloquear clics */
 }
+
 
 #axis-x {
   left: 0;
@@ -226,6 +243,13 @@ html {
   background-position: 50% var(--axis-phase-y);
 }
 
+/* Aseguramos z-index bajo para ejes y sus pseudo-elementos dentro del canvas */
+#axis-x, #axis-y,
+#axis-x::before, #axis-x::after,
+#axis-y::before, #axis-y::after {
+  z-index: var(--z-axes);
+}
+
 /* Visual indicator for the center of the axes */
 #axis-center {
   position: absolute;
@@ -238,7 +262,7 @@ html {
   transform: translate(-50%, -50%);
   box-shadow: 1px 1px 5px rgba(0, 0, 0, 0.2);
   opacity: 0.7;
-  z-index: 2;
+  z-index: var(--z-axes);
 }
 
 /* ============================ */
@@ -263,7 +287,7 @@ html {
   max-height: 180px;
   */
 
-  z-index: 1;
+  z-index: var(--z-items);
 }
 
 .item img {
@@ -315,7 +339,7 @@ html {
   padding: 10px;
   border-radius: 5px;
   color: white;
-  z-index: 2;
+  z-index: var(--z-nav);
 }
 
 .eje-selector {
@@ -330,13 +354,13 @@ html {
   position: fixed;
   top: 0;
   left: 0;
-  width: 100vw;
-  height: 100vh;
+  width: 100dvw;
+  height: 100dvh;
   background-color: rgba(0, 0, 0, 0.7);
   display: flex;
   justify-content: center;
   align-items: center;
-  z-index: 100;
+  z-index: var(--z-popup);
 }
 
 #popup-imagen {
@@ -348,13 +372,13 @@ html {
 #modal-img-grande {
   position: fixed;
   inset: 0;
-  width: 100vw;
-  height: 100vh;
+  width: 100dvw;
+  height: 100dvh;
   display: flex;
   align-items: center;
   justify-content: center;
   background: rgba(0, 0, 0, 0.25); /* velito translúcido */
-  z-index: 9999;
+  z-index: var(--z-modal);
   /* Sin borde, sin sombra */
 }
 
@@ -427,7 +451,7 @@ html {
    ============================ */
 .cardinal-slot {
   position: fixed;
-  z-index: 90;
+  z-index: var(--z-cardinal);
   pointer-events: none;
   display: flex;
   align-items: center;
@@ -481,39 +505,47 @@ html {
   transform: translateY(var(--edge-bottom-gap));
 }
 
-
 /* Ejes “desde el ratón”: cuatro mitades naciendo del punto (x,y) */
-#mouse-axes{
-  position: fixed; inset: 0; z-index: 2; pointer-events: none;
+#mouse-axes {
+  position: fixed;
+  inset: 0;
+  z-index: var(--z-mouse-axes);
+  pointer-events: none;
+  opacity: 0;
+}
+body.mouse-axes-active #mouse-axes {
+  opacity: 1;
 }
 
 /* Horizontales: una a la izq, otra a la dcha */
 #mouse-axes .h-left,
-#mouse-axes .h-right{
-  position: absolute; height: var(--axis-thickness);
+#mouse-axes .h-right {
+  position: absolute;
+  height: var(--axis-thickness);
   top: calc(var(--mouse-y, 50dvh) - var(--axis-thickness) / 2);
-  background-repeat: repeat; background-size: auto 100%;
+  background-repeat: repeat;
+  background-size: auto 100%;
 }
 
 /* Izquierda: centro → izquierda */
-#mouse-axes .h-left{
+#mouse-axes .h-left {
   left: 0;
-  right: calc(100vw - var(--mouse-x, 50vw));
+  right: calc(100vw - var(--mouse-x, 50dvw));
   background-image: repeating-linear-gradient(
     to left,
-    var(--rose-clay) 0 var(--axis-dash),
+    var(--slate-warm) 0 var(--axis-dash),
     transparent 0 calc(var(--axis-dash) + var(--axis-gap))
   );
   background-position: calc(100% - var(--axis-phase-x)) 50%;
 }
 
 /* Derecha: centro → derecha */
-#mouse-axes .h-right{
-  left: var(--mouse-x, 50vw);
+#mouse-axes .h-right {
+  left: var(--mouse-x, 50dvw);
   right: 0;
   background-image: repeating-linear-gradient(
     to right,
-    var(--rose-clay) 0 var(--axis-dash),
+    var(--slate-warm) 0 var(--axis-dash),
     transparent 0 calc(var(--axis-dash) + var(--axis-gap))
   );
   background-position: var(--axis-phase-x) 50%;
@@ -521,31 +553,33 @@ html {
 
 /* Verticales: una arriba, otra abajo */
 #mouse-axes .v-top,
-#mouse-axes .v-bottom{
-  position: absolute; width: var(--axis-thickness);
-  left: calc(var(--mouse-x, 50vw) - var(--axis-thickness) / 2);
-  background-repeat: repeat; background-size: 100% auto;
+#mouse-axes .v-bottom {
+  position: absolute;
+  width: var(--axis-thickness);
+  left: calc(var(--mouse-x, 50dvw) - var(--axis-thickness) / 2);
+  background-repeat: repeat;
+  background-size: 100% auto;
 }
 
 /* Arriba: centro → arriba */
-#mouse-axes .v-top{
+#mouse-axes .v-top {
   top: 0;
-  bottom: calc(100vh - var(--mouse-y, 50dvh));
+  bottom: calc(100dvh - var(--mouse-y, 50dvh));
   background-image: repeating-linear-gradient(
     to top,
-    var(--rose-clay) 0 var(--axis-dash),
+    var(--slate-warm) 0 var(--axis-dash),
     transparent 0 calc(var(--axis-dash) + var(--axis-gap))
   );
   background-position: 50% calc(100% - var(--axis-phase-y));
 }
 
 /* Abajo: centro → abajo */
-#mouse-axes .v-bottom{
+#mouse-axes .v-bottom {
   top: var(--mouse-y, 50dvh);
   bottom: 0;
   background-image: repeating-linear-gradient(
     to bottom,
-    var(--rose-clay) 0 var(--axis-dash),
+    var(--slate-warm) 0 var(--axis-dash),
     transparent 0 calc(var(--axis-dash) + var(--axis-gap))
   );
   background-position: 50% var(--axis-phase-y);

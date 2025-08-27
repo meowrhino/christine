@@ -1,197 +1,107 @@
-Christine — Ítems Compass
+# Christine — Ejes interactivos + arrows cardinales
 
-Visualizador interactivo tipo “political‑compass” para posicionar proyectos/ítems en un plano X/Y según dos ejes seleccionables. Los ítems y sus coordenadas vienen de items.json. La interfaz permite elegir los ejes, centra el lienzo al cargar/redimensionar y abre un popup con detalles al hacer clic en cada ítem.
+Visualizador tipo “compass” para posicionar proyectos/ítems en un plano X/Y con:
+- **Ejes centrales** que nacen desde el centro (dos mitades por eje) con patrón configurable.
+- **Arrows cardinales** pegadas a sangre en los 4 bordes.
+- **Ejes del ratón / dedo** que nacen desde la última posición del puntero.
+- **Radar** (onda elíptica) cuando apuntas o tocas el centro.
+- Layout con **márgenes paramétricos** y paleta en `:root`.
 
-Estado del repo (este ZIP): contiene index.html, style.css, app.js, items.json y una carpeta de assets img/ con subcarpetas img/_arrows/ (top/right/bottom/left) para futuros indicadores cardinales.
+---
 
-⸻
-
-1) Cómo ejecutar
-
-La página usa fetch("items.json"), por lo que es recomendable servirla con un servidor estático local (evita problemas de CORS al abrir como file://).
-
-# desde la carpeta que contiene ./christine
+## Ejecutar
+Cualquier servidor estático vale:
+```bash
 cd christine
 python -m http.server 8000
-# abre http://localhost:8000 en el navegador
+# http://localhost:8000
+```
 
-
-⸻
-
-2) Estructura de carpetas
-
+## Estructura
+```
 christine/
-├─ index.html          # HTML principal: canvas, ejes, menú (select de eje X/Y), popup
-├─ style.css           # Estilos del lienzo, ejes, ítems, popup y menú
-├─ app.js              # Lógica de carga/render, mapeo al canvas y eventos
-├─ items.json          # Datos de ítems + coordenadas por eje
-└─ img/
-   └─ _arrows/         # (Preparado) indicadores para los bordes del viewport
-      ├─ top/          # ej. SILLY.png, GRAPHIC.png, OPINIONATED.png, ...
-      ├─ right/
-      ├─ bottom/
-      └─ left/
+├─ index.html          # HTML principal (canvas, ejes, menú, popup, mouse-axes)
+├─ style.css           # Paleta, layout, ejes, arrows, mouse-axes, radar
+├─ app.js              # Carga datos, posiciona ítems, selectores, móvil/ratón
+├─ items.json          # Datos de ítems y coordenadas por eje
+└─ img/_arrows/{top,right,bottom,left}/  # assets de polos (PNG/SVG)
+```
 
+---
 
-⸻
+## Variables en `:root` (resumen)
+```css
+/* Márgenes y área útil */
+--frame-v: 5dvh;                      /* margen arriba/abajo  */
+--frame-h: 2.5dvw;                    /* margen izquierda/dcha */
+--content-h: calc(100dvh - 2*var(--frame-v));
+--content-w: calc(100dvw - 2*var(--frame-h));
 
-3) Modelo de datos (items.json)
+/* Paleta */
+--mint-apple:#c9ff7f; --slate-warm:#686369; --rose-clay:#ba9592;
 
-Cada objeto describe un ítem posicionable y su contenido de popup.
+/* Arrows */
+--cardinal-width-x:  clamp(96px, 10vw, 200px);  /* L/R → width fijo, height auto */
+--cardinal-height-y: clamp(96px, 10vh, 200px);  /* T/B → height fijo, width auto */
 
-{
-  "id": 1,
-  "titulo": "…",
-  "ejes": {
-    "Illustration/Graphic": 7,
-    "Artwork/Commercial": 7,
-    "Demure/Opinionated": -1,
-    "Silly/Serious": 7
-  },
-  "descripcion": ["párrafo 1", "párrafo 2", "..."],
-  "imagen": "img/ruta_principal.jpg",
-  "miniatura": "",                  // (opcional, actualmente no se usa)
-  "galeria": ["img/extra1.jpg", "video/clip.mp4"],
-  "principal": ""                   // (campo reservado; no se usa aún)
-}
+/* Ejes (patrón) */
+--axis-thickness: 2px;
+--axis-dash: 16px;
+--axis-gap: 12px;
+--axis-phase-x: -8px;
+--axis-phase-y: -8px;
 
-	•	Ejes disponibles (detectados en este dataset): Illustration/Graphic, Artwork/Commercial, Demure/Opinionated, Silly/Serious.
-	•	Rango actual de valores en ejes: -10..10 (el render mapea con margen -12..12).
-	•	Si añades un eje nuevo, aparecerá automáticamente en los selectores.
+/* Radar */
+--radar-color: var(--rose-clay);
+--radar-stroke: 2px;
+--radar-duration: 1400ms;
+--radar-delay: 500ms;
+```
+- Editando estas variables lo ajustas **todo** (márgenes, ejes, arrows, radar) sin tocar HTML/JS.
 
-⸻
+---
 
-4) Funcionamiento (alto nivel)
+## Colocación de ítems
+- Cada ítem tiene valores de eje en `[-12, 12]` (datos actuales en `[-10,10]`).
+- Se mapea a píxeles con `mapToCanvas(val, -12, 12, size)`.
+- **Centrado real**: se crea el `.item`, se añade al DOM, se miden `offsetWidth/Height` y se resta su **mitad**:
+  ```js
+  const x = mapToCanvas(item.ejes[ejeX], -12, 12, canvasW) - (itemW/2);
+  const y = mapToCanvas(item.ejes[ejeY], -12, 12, canvasH) - (itemH/2);
+  ```
+- Esto evita sesgos en móvil (donde el tamaño de los ítems difiere del desktop).
 
-4.1 Flujo de arranque (app.js)
-	•	cargarItems() → fetch("items.json") → extrae las claves de ejes y elige dos ejes distintos al azar para X e Y.
-	•	renderizarSelectoresEjes() → rellena <select id="eje-x"> y <select id="eje-y"> evitando duplicados. Si el usuario elige el mismo eje en ambos, el código corrige automáticamente para que sean distintos.
-	•	renderizarItems() → limpia y posiciona cada .item según los valores del ítem en los ejes elegidos.
-	•	centrarScroll(true/false) → centra el viewport sobre el centro del #canvas (en carga y en resize).
+---
 
-4.2 Mapeo de coordenadas
+## Ejes centrales “desde el centro”
+- `#axis-x` y `#axis-y` se dibujan con `::before/::after` (mitad izquierda/derecha y arriba/abajo).
+- Patrón con `repeating-linear-gradient` usando `--axis-thickness`, `--axis-dash`, `--axis-gap` y **fase** `--axis-phase-x/y`.
 
-Se usa:
+## Arrows cardinales (bordes)
+- LEFT/RIGHT usan `width: var(--cardinal-width-x); height:auto`.
+- TOP/BOTTOM usan `height: var(--cardinal-height-y); width:auto`.
+- `generateCardinalArrows()` pinta según los ejes activos. Si falta un asset, **se loguea** y el slot se deja vacío.
 
-mapToCanvas(val, /*min*/ -12, /*max*/ 12, /*size*/ canvasW_or_canvasH)
+## Ejes del ratón / dedo
+- Capa `#mouse-axes` está **oculta** al cargar; se activa al primer movimiento / tap real:
+  - JS añade `body.mouse-axes-active` y actualiza `--mouse-x/--mouse-y` (en px).
+  - En iOS se usan unidades `dvh` para que no se corte la mitad superior.
 
-	•	Valores negativos → izquierda (X) o arriba (Y).
-	•	Valores positivos → derecha (X) o abajo (Y).
-	•	Cada ítem es un <div class="item"> posicionado absoluto dentro de #canvas.
+## Radar (centro)
+- Dos ondas (`#canvas::before/::after`) que escalan 0.05→1 y se desvanecen.
+- Se activa al over / tap del elemento `#axis-center` (o cerca del centro en desktop si se habilita).
 
-4.3 Interacción
-	•	Hover: escala/rota levemente el .item.
-	•	Click en ítem: abre popup con:
-	•	#popup-titulo (título del ítem)
-	•	#popup-descripcion (cada string de descripcion como <p>)
-	•	#popup-imagen (imagen principal; clic para abrir modal a tamaño grande)
-	•	#popup-galeria (thumbnails; soporta imágenes y .mp4 con <video controls>)
-	•	Cerrar: botón × o clic en fondo del popup/modal.
+---
 
-⸻
+## Móvil
+- **Scroll de página** se bloquea **solo** mientras arrastras sobre el `#canvas`; el popup mantiene su scroll.
+- Unidades `dvh` evitan saltos por la barra de iOS.
+- El dedo funciona como ratón vía Pointer Events.
 
-5) Estilos relevantes (style.css)
-	•	#canvas usa 100dvw × 100dvh (en móvil duplica el tamaño: 2×).
-	•	Ejes: #axis-x (línea horizontal) y #axis-y (vertical).
-	•	Menú: #menu fijo abajo‑derecha con selectores #eje-x, #eje-y.
-	•	Ítems (.item) son mosaicos con imagen y título; el tamaño base viene de CSS con unidades dvw/dvh.
-	•	Popup y modal de imagen grande (#modal-img-grande) ya implementados.
+---
 
-Nota: actualmente no hay :root con paleta global. Añadiremos variables de color en el siguiente paso.
-
-⸻
-
-6) Preparado para mejoras (lo que vamos a añadir)
-
-6.1 Paleta de colores en :root
-
-Añadiremos estas variables (nombres sugeridos) al comienzo de style.css:
-
-:root {
-  --mint-apple:   #C9FF7F; /* acento menta */
-  --slate-warm:   #686369; /* gris pizarra cálido */
-  --rose-clay:    #BA9592; /* rosa arcilla suave */
-  --neon-green:   #00FF00; /* highlight/estado activo */
-  --aqua:         #00FFFF; /* cian de énfasis */
-  --royal-blue:   #0000FF; /* azul intenso */
-  --ink:          #000000; /* texto/contornos */
-}
-
-6.2 Indicadores cardinales (bordes del viewport)
-
-Ya existen assets en img/_arrows/ con nombres de polos: ILLUSTRATION.png, GRAPHIC.png, SILLY.png, SERIOUS.png, DEMURE.png, OPINION.png/OPINIONATED.png, ARTWORK.png, COMMERCIAL.png.
-
-Idea de implementación:
-	1.	Añadir 4 slots al final de <body>:
-
-<div id="slot-top"    class="cardinal-slot slot-top"    hidden></div>
-<div id="slot-right"  class="cardinal-slot slot-right"  hidden></div>
-<div id="slot-bottom" class="cardinal-slot slot-bottom" hidden></div>
-<div id="slot-left"   class="cardinal-slot slot-left"   hidden></div>
-
-	2.	CSS base:
-
-.cardinal-slot {
-  position: fixed; z-index: 5000; pointer-events: none;
-  display: flex; align-items: center; justify-content: center; gap: 8px;
-}
-.slot-top    { top:    12px; left: 50%; transform: translateX(-50%); }
-.slot-bottom { bottom: 12px; left: 50%; transform: translateX(-50%); }
-.slot-left   { left:   12px; top: 50%; transform: translateY(-50%); }
-.slot-right  { right:  12px; top: 50%; transform: translateY(-50%); }
-.cardinal-slot img { max-width: clamp(32px, 8vmin, 96px); max-height: clamp(32px, 8vmin, 96px); }
-
-	3.	JS para mostrarlos según los ejes activos (convención: primer término = negativo → left/top; segundo = positivo → right/bottom):
-
-function normPole(p){
-  const up = p.toUpperCase().replace(/[^A-Z]/g, "");
-  // Fallback de OPINIONATED→OPINION si falta el asset
-  return (up === "OPINIONATED") ? "OPINIONATED" : up;
-}
-function setSlot(id, src){
-  const el = document.getElementById(id);
-  el.replaceChildren(); const img = new Image(); img.src = src; img.alt = id; el.appendChild(img);
-  el.hidden = false;
-}
-function updateCardinalArrows(){
-  const [leftLabel, rightLabel] = ejeX.split("/");
-  const [topLabel,  bottomLabel] = ejeY.split("/");
-  setSlot("slot-left",   `img/_arrows/left/${{normPole(leftLabel)}}.png`);
-  setSlot("slot-right",  `img/_arrows/right/${{normPole(rightLabel)}}.png`);
-  // Para Y consideramos el primer término como la parte superior (valores negativos)
-  const topName = normPole(topLabel), bottomName = normPole(bottomLabel);
-  // Fallback si no existiera OPINIONATED en alguna carpeta:
-  const trySrc = (side, name) => [name, (name==="OPINIONATED"?"OPINION":name)].map(n=>`img/_arrows/${{side}}/${{n}}.png`);
-  setSlot("slot-top",    trySrc("top", topName)[0]);
-  setSlot("slot-bottom", trySrc("bottom", bottomName)[0]);
-}
-/* Llamar tras renderizar selectores y también en onchange de #eje-x / #eje-y */
-
-
-⸻
-
-7) Puntos a tener en cuenta
-	•	El canvas usa dvw/dvh; en móviles se duplica el tamaño del lienzo para tener más “espacio de juego”.
-	•	El mapeo de valores actualmente asume rango [-12,12]; tus datos están en [-10,10]. Si cambias el rango de los datos, ajusta las constantes en renderizarItems().
-	•	Asegúrate de que imagen siempre apunte a un asset existente; no hay placeholder en app.js.
-	•	Los nombres de polos deben coincidir con los assets en img/_arrows/*/*.png (mayúsculas). En el dataset usas “Demure/Opinionated”; en assets existe tanto OPINION.png como OPINIONATED.png. Hemos previsto fallback si hiciera falta.
-
-⸻
-
-8) Roadmap inmediato
-	•	Añadir :root con la paleta proporcionada y aplicarla al menú/ejes/popups.
-	•	Integrar los cardinal arrows con los 4 slots y updateCardinalArrows().
-	•	(Opcional) Etiquetas de texto junto a los ejes con los polos activos.
-	•	(Opcional) Normalizar estilos de .item img para evitar reglas duplicadas.
-
-⸻
-
-9) Créditos y licencia
-
-Proyecto interno de exploración UI/UX. Uso de imágenes y textos con fines de portfolio/documentación.
-
-
-
-
-NOTAS:
-
+## Tips
+- Cambia tamaño y separación del patrón: `--axis-dash`, `--axis-gap`, `--axis-thickness`.
+- Ajusta “fase” desde el centro: `--axis-phase-x`, `--axis-phase-y`.
+- Ajusta tamaño de arrows: `--cardinal-width-x`, `--cardinal-height-y`.
+- Ajusta márgenes: `--frame-v`, `--frame-h`.

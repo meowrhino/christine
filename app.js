@@ -93,59 +93,52 @@ function renderizarItems() {
   // Limpia ítems previos
   Array.from(canvas.querySelectorAll(".item")).forEach((el) => el.remove());
 
-  // El tamaño de los ítems se basa en viewport y se usa un placeholder de imagen
   itemsData.forEach((item) => {
     const div = document.createElement("div");
     div.className = "item";
     div.style.setProperty("--item-bg", item.colorFondo || "#b9bef7"); // color de fondo si existe
 
-    const canvasW = canvas.offsetWidth;
-    const canvasH = canvas.offsetHeight;
-
-    // Posicionamiento con rango -12 a 12
-    const x =
-      mapToCanvas(item.ejes[ejeX], -12, 12, canvasW) -
-      (div.offsetWidth / 2 || 40);
-    const y =
-      mapToCanvas(item.ejes[ejeY], -12, 12, canvasH) -
-      (div.offsetHeight / 2 || 40);
-    div.style.left = `${x}px`;
-    div.style.top = `${y}px`;
-
-    // Imagen obligatoria desde el JSON (sin fallback)
-    // La imagen debe venir siempre del JSON, no se usa imagen por defecto
+    // Contenido
     const img = document.createElement("img");
     img.src = item.imagen;
     img.alt = item.titulo;
     div.appendChild(img);
 
-    // Título debajo
     const tituloDiv = document.createElement("div");
     tituloDiv.className = "item-titulo";
     tituloDiv.textContent = item.titulo;
     div.appendChild(tituloDiv);
+
+    // Añadir al DOM ANTES de medir
+    canvas.appendChild(div);
+
+    // Medidas reales
+    const canvasW = canvas.offsetWidth;
+    const canvasH = canvas.offsetHeight;
+    const w = div.offsetWidth  || 80;
+    const h = div.offsetHeight || 80;
+
+    // Posicionamiento con rango -12 a 12, centrado por su mitad
+    const x = mapToCanvas(item.ejes[ejeX], -12, 12, canvasW) - (w / 2);
+    const y = mapToCanvas(item.ejes[ejeY], -12, 12, canvasH) - (h / 2);
+    div.style.left = `${x}px`;
+    div.style.top  = `${y}px`;
 
     // Click para mostrar popup
     div.onclick = (e) => {
       e.stopPropagation();
       mostrarPopup(item);
     };
-
-    canvas.appendChild(div);
   });
 
+  // Efectos hover
   document.querySelectorAll(".item").forEach((item) => {
     item.addEventListener("mouseenter", () => {
       const randomRotate = Math.random() * 6 - 3; // de -3° a +3°
       const randomScale = 1 + Math.random() * 0.1; // de 1 a 1.1
-
-      item.style.transform = `scale(${randomScale.toFixed(
-        2
-      )}) rotate(${randomRotate.toFixed(2)}deg)`;
+      item.style.transform = `scale(${randomScale.toFixed(2)}) rotate(${randomRotate.toFixed(2)}deg)`;
     });
-
     item.addEventListener("mouseleave", () => {
-      // Vuelve a la normalidad
       item.style.transform = "";
     });
   });
@@ -306,12 +299,15 @@ function generateCardinalArrows() {
 
 // --- Radar y Target Central ---
 function showLastClickedAsTarget(){
-  // Garantiza que exista #axis-center
+  // Garantiza que exista #axis-center dentro del canvas
   let c = document.getElementById("axis-center");
   if (!c) {
     c = document.createElement("div");
     c.id = "axis-center";
-    document.body.appendChild(c);
+  }
+  const __canvasForCenter = document.getElementById("canvas");
+  if (__canvasForCenter && c.parentElement !== __canvasForCenter) {
+    __canvasForCenter.appendChild(c);
   }
 
   // Hover (desktop)
@@ -337,14 +333,23 @@ function showLastClickedAsTarget(){
 
 // === Mouse Axes (actualiza --mouse-x / --mouse-y en tiempo real) ===
 (() => {
+  // Mouse / Pointer / Touch → actualiza --mouse-x/--mouse-y
+  // y solo muestra #mouse-axes tras la primera interacción real.
   const rootStyle = document.documentElement.style;
-  let px = null, py = null, raf = 0;
+  const layer = document.getElementById('mouse-axes');
+  if (layer) layer.style.opacity = '0'; // oculto de inicio por si el CSS no lo hace
+  let px = 0, py = 0, raf = 0, armed = false;
 
   function commit() {
     raf = 0;
-    if (px == null || py == null) return;
     rootStyle.setProperty('--mouse-x', px + 'px');
     rootStyle.setProperty('--mouse-y', py + 'px');
+    if (!armed) {
+      armed = true;
+      // Haz visible la capa (tanto si hay CSS con clase como si no)
+      document.body.classList.add('mouse-axes-active');
+      if (layer) layer.style.opacity = '1';
+    }
   }
 
   function onMove(clientX, clientY) {
@@ -353,26 +358,22 @@ function showLastClickedAsTarget(){
     if (!raf) raf = requestAnimationFrame(commit);
   }
 
-  // ratón
-  window.addEventListener('mousemove', (e) => onMove(e.clientX, e.clientY), { passive: true });
-
-  // pointer (unificado: ratón, lápiz, touch)
+  // Pointer Events (preferido: unifica ratón/lápiz/touch)
   if (window.PointerEvent) {
     window.addEventListener('pointermove', (e) => onMove(e.clientX, e.clientY), { passive: true });
     window.addEventListener('pointerdown', (e) => onMove(e.clientX, e.clientY), { passive: true });
   }
 
-  // táctil
+  // Fallbacks adicionales
+  window.addEventListener('mousemove', (e) => onMove(e.clientX, e.clientY), { passive: true });
+  window.addEventListener('touchstart', (e) => {
+    const t = e.touches && e.touches[0];
+    if (t) onMove(t.clientX, t.clientY);
+  }, { passive: true });
   window.addEventListener('touchmove', (e) => {
     const t = e.touches && e.touches[0];
     if (t) onMove(t.clientX, t.clientY);
   }, { passive: true });
 
-  window.addEventListener('touchstart', (e) => {
-    const t = e.touches && e.touches[0];
-    if (t) onMove(t.clientX, t.clientY);
-  }, { passive: true });
-
-  // inicial: centro (por si no hay movimiento aún)
-  onMove(window.innerWidth / 2, window.innerHeight / 2);
+  // Importante: NO inicializamos al centro.
 })();
