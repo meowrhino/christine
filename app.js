@@ -63,7 +63,10 @@ function renderizarSelectoresEjes() {
     }
     renderizarSelectoresEjes();
     renderizarItems();
+
+    syncElasticMenuLabels();
     generateCardinalArrows();
+    syncElasticMenuLabels();
   };
   selectY.onchange = function () {
     ejeY = selectY.value;
@@ -72,7 +75,10 @@ function renderizarSelectoresEjes() {
     }
     renderizarSelectoresEjes();
     renderizarItems();
+
+    syncElasticMenuLabels();
     generateCardinalArrows();
+    syncElasticMenuLabels();
   };
 }
 
@@ -119,6 +125,51 @@ function scheduleRadarFade() {
 // Ángulo aleatorio en rango [-max,+max]
 function randomAngle(max = 15) {
   return Math.random() * (max * 2) - max;
+}
+
+// ======== Elastic faux labels (reusable) ========
+function fitSpanToBox(span) {
+  if (!span) return;
+  const box = span.parentElement;
+  if (!box) return;
+
+  // reset to measure natural size
+  span.style.transform = "scale(1,1)";
+
+  const bw = Math.max(1, box.clientWidth - 6); // padding compensation
+  const bh = Math.max(1, box.clientHeight - 6);
+
+  // Use getBoundingClientRect for height when fonts differ
+  const rect = span.getBoundingClientRect();
+  const sw = Math.max(1, span.scrollWidth);
+  const sh = Math.max(1, rect.height || span.scrollHeight);
+
+  const sx = bw / sw;
+  const sy = bh / sh;
+
+  span.style.transformOrigin = "left center";
+  span.style.transform = `scale(${sx}, ${sy})`;
+}
+
+/**
+ * Update labels inside a menu container (default #menu).
+ * Finds pairs: .select-wrap → <select> + .select-faux > .elastic-label
+ * This is reusable for future menus: pass a selector or element.
+ */
+function syncElasticMenuLabels(container = "#menu") {
+  const root =
+    typeof container === "string"
+      ? document.querySelector(container)
+      : container;
+  if (!root) return;
+  root.querySelectorAll(".select-wrap").forEach((wrap) => {
+    const select = wrap.querySelector("select");
+    const span = wrap.querySelector(".select-faux > .elastic-label");
+    if (!select || !span) return;
+    const opt = select.options[select.selectedIndex];
+    span.textContent = opt ? opt.textContent : "";
+    fitSpanToBox(span);
+  });
 }
 
 // =============================
@@ -362,7 +413,10 @@ window.onload = async function () {
   await cargarItems();
   renderizarItems();
 
+  syncElasticMenuLabels();
+
   generateCardinalArrows();
+  syncElasticMenuLabels();
   showLastClickedAsTarget(); // radar y target central
 
   // — móvil/ptr — desactiva pan del navegador SOLO mientras se arrastra sobre el canvas
@@ -389,8 +443,11 @@ window.onload = async function () {
 
 window.addEventListener("resize", () => {
   renderizarItems();
+
+  syncElasticMenuLabels();
   centrarScroll(true);
   setTimeout(() => centrarScroll(false), 300);
+  syncElasticMenuLabels();
 });
 
 function centrarScroll(forceAuto = false) {

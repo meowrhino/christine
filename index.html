@@ -10,18 +10,24 @@
 
 <body>
 
-<div id="margenes-menta">
-  <div id="canvas">
+  <div id="margenes-menta">
+    <div id="canvas">
       <div id="axis-x" class="axis"></div>
       <div id="axis-y" class="axis"></div>
       <!-- Aquí se renderizan los ítems por JS -->
     </div>
   </div>
 
-<div id="menu">
-  <select id="eje-x" class="eje-selector" aria-label="X"></select>
-  <select id="eje-y" class="eje-selector" aria-label="Y"></select>
-</div>
+  <div id="menu">
+    <div class="select-wrap">
+      <select id="eje-x" class="eje-selector" aria-label="X"></select>
+      <div class="select-faux"><span class="elastic-label"></span></div>
+    </div>
+    <div class="select-wrap">
+      <select id="eje-y" class="eje-selector" aria-label="Y"></select>
+      <div class="select-faux"><span class="elastic-label"></span></div>
+    </div>
+  </div>
 
   <div id="popup" class="oculto">
     <div class="contenido-popup">
@@ -34,13 +40,13 @@
   </div>
 
   <script src="app.js"></script>
-  
+
 
   <!-- Slots para flechas cardinales -->
-  <div id="slot-top"    class="cardinal-slot slot-top"></div>
-  <div id="slot-right"  class="cardinal-slot slot-right"></div>
+  <div id="slot-top" class="cardinal-slot slot-top"></div>
+  <div id="slot-right" class="cardinal-slot slot-right"></div>
   <div id="slot-bottom" class="cardinal-slot slot-bottom"></div>
-  <div id="slot-left"   class="cardinal-slot slot-left"></div>
+  <div id="slot-left" class="cardinal-slot slot-left"></div>
 </body>
 
 </html>

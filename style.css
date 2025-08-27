@@ -530,3 +530,61 @@ body.dragging #canvas {
     animation: none !important;
   }
 }
+
+/* === Elastic Menu (half-width per select, deform text to fit) === */
+#menu {
+  gap: var(--menu-gap, 10px);
+}
+
+.select-wrap {
+  position: relative;
+  height: var(--frame-v);
+  flex: 1 1 0;
+  max-width: calc((100% - var(--menu-gap, 10px)) / 2);
+  min-width: 120px;
+  overflow: hidden;
+  display: block;
+}
+
+/* Keep native select for a11y, but invisible; it covers the whole button */
+.select-wrap > select.eje-selector {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  cursor: pointer;
+  z-index: 2;
+}
+
+/* Visual plate */
+.select-faux {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  background: #000;
+  padding: 0 10px;
+  z-index: 1;
+}
+.select-faux > .elastic-label {
+  display: inline-block;
+  white-space: nowrap;
+  line-height: 1;
+  font-family: "CooperHewitt-Heavy", system-ui, -apple-system, Segoe UI, Roboto,
+    Arial, sans-serif;
+  font-weight: 800;
+  color: var(--mint-apple);
+  font-size: 180px; /* base huge size; will be scaled down/up */
+  transform-origin: left center;
+  will-change: transform;
+}
+
+/* On very narrow screens, allow selects to shrink below 50% if needed */
+@media (max-width: 520px) {
+  .select-wrap {
+    max-width: none;
+    flex: 1 1 45%;
+  }
+}
