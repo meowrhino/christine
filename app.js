@@ -90,39 +90,53 @@ function mapToCanvas(val, min, max, size) {
 // Renderiza los ítems en el canvas posicionándolos según los ejes seleccionados
 function renderizarItems() {
   const canvas = document.getElementById("canvas");
+  if (!canvas || !itemsData || !itemsData.length) return;
+
   // Limpia ítems previos
   Array.from(canvas.querySelectorAll(".item")).forEach((el) => el.remove());
+
+  // Mide el canvas una sola vez por render
+  const canvasW = canvas.offsetWidth;
+  const canvasH = canvas.offsetHeight;
 
   itemsData.forEach((item) => {
     const div = document.createElement("div");
     div.className = "item";
-    div.style.setProperty("--item-bg", item.colorFondo || "#b9bef7"); // color de fondo si existe
+    if (item.colorFondo) {
+      div.style.setProperty("--item-bg", item.colorFondo);
+    }
 
     // Contenido
     const img = document.createElement("img");
     img.src = item.imagen;
-    img.alt = item.titulo;
+    img.alt = item.titulo || "";
     div.appendChild(img);
 
     const tituloDiv = document.createElement("div");
     tituloDiv.className = "item-titulo";
-    tituloDiv.textContent = item.titulo;
+    tituloDiv.textContent = item.titulo || "";
     div.appendChild(tituloDiv);
 
     // Añadir al DOM ANTES de medir
     canvas.appendChild(div);
 
-    // Medidas reales
-    const canvasW = canvas.offsetWidth;
-    const canvasH = canvas.offsetHeight;
-    const w = div.offsetWidth  || 80;
-    const h = div.offsetHeight || 80;
+    // Función de posicionamiento (reutilizable tras load)
+    function position() {
+      const w = div.offsetWidth  || img.naturalWidth  || 80;
+      const h = div.offsetHeight || img.naturalHeight || 80;
+      const x = mapToCanvas(item.ejes[ejeX], -12, 12, canvasW) - (w / 2);
+      const y = mapToCanvas(item.ejes[ejeY], -12, 12, canvasH) - (h / 2);
+      div.style.left = `${x}px`;
+      div.style.top  = `${y}px`;
+    }
 
-    // Posicionamiento con rango -12 a 12, centrado por su mitad
-    const x = mapToCanvas(item.ejes[ejeX], -12, 12, canvasW) - (w / 2);
-    const y = mapToCanvas(item.ejes[ejeY], -12, 12, canvasH) - (h / 2);
-    div.style.left = `${x}px`;
-    div.style.top  = `${y}px`;
+    // Posición inicial (puede refinarse tras cargar la imagen)
+    position();
+
+    // Reposiciona cuando la imagen termina de cargar (mejor centrado)
+    if (!img.complete) {
+      img.addEventListener("load", position, { once: true });
+    }
 
     // Click para mostrar popup
     div.onclick = (e) => {
@@ -132,7 +146,7 @@ function renderizarItems() {
   });
 
   // Efectos hover
-  document.querySelectorAll(".item").forEach((item) => {
+  canvas.querySelectorAll(".item").forEach((item) => {
     item.addEventListener("mouseenter", () => {
       const randomRotate = Math.random() * 6 - 3; // de -3° a +3°
       const randomScale = 1 + Math.random() * 0.1; // de 1 a 1.1
@@ -330,50 +344,3 @@ function showLastClickedAsTarget(){
     }
   });
 }
-
-// === Mouse Axes (actualiza --mouse-x / --mouse-y en tiempo real) ===
-(() => {
-  // Mouse / Pointer / Touch → actualiza --mouse-x/--mouse-y
-  // y solo muestra #mouse-axes tras la primera interacción real.
-  const rootStyle = document.documentElement.style;
-  const layer = document.getElementById('mouse-axes');
-  if (layer) layer.style.opacity = '0'; // oculto de inicio por si el CSS no lo hace
-  let px = 0, py = 0, raf = 0, armed = false;
-
-  function commit() {
-    raf = 0;
-    rootStyle.setProperty('--mouse-x', px + 'px');
-    rootStyle.setProperty('--mouse-y', py + 'px');
-    if (!armed) {
-      armed = true;
-      // Haz visible la capa (tanto si hay CSS con clase como si no)
-      document.body.classList.add('mouse-axes-active');
-      if (layer) layer.style.opacity = '1';
-    }
-  }
-
-  function onMove(clientX, clientY) {
-    px = Math.max(0, Math.min(window.innerWidth,  clientX));
-    py = Math.max(0, Math.min(window.innerHeight, clientY));
-    if (!raf) raf = requestAnimationFrame(commit);
-  }
-
-  // Pointer Events (preferido: unifica ratón/lápiz/touch)
-  if (window.PointerEvent) {
-    window.addEventListener('pointermove', (e) => onMove(e.clientX, e.clientY), { passive: true });
-    window.addEventListener('pointerdown', (e) => onMove(e.clientX, e.clientY), { passive: true });
-  }
-
-  // Fallbacks adicionales
-  window.addEventListener('mousemove', (e) => onMove(e.clientX, e.clientY), { passive: true });
-  window.addEventListener('touchstart', (e) => {
-    const t = e.touches && e.touches[0];
-    if (t) onMove(t.clientX, t.clientY);
-  }, { passive: true });
-  window.addEventListener('touchmove', (e) => {
-    const t = e.touches && e.touches[0];
-    if (t) onMove(t.clientX, t.clientY);
-  }, { passive: true });
-
-  // Importante: NO inicializamos al centro.
-})();
