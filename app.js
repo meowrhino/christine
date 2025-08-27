@@ -149,22 +149,23 @@ function fitFauxSVG(faux, text) {
   const upper = (text || "").toUpperCase();
   t.textContent = upper;
 
-  const cs = getComputedStyle(faux);
-  const fam = cs.fontFamily || "sans-serif";
-  const wgt = cs.fontWeight || "800";
-  const color = cs.color || "currentColor";
-  t.setAttribute("style", `font-family:${fam};font-weight:${wgt};fill:${color}`);
+  // Fuerza familia/peso heavy (no dependas del computed 400)
+  const fam = `"CooperHewitt-Heavy", system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif`;
+  const wgt = "900";
+  const color = getComputedStyle(faux).color || "currentColor";
+  t.setAttribute("style", `font-family:${fam};font-weight:${wgt};font-kerning:normal;fill:${color}`);
 
-  // medir grande y normalizar a (0,0)
   t.removeAttribute("transform");
   t.setAttribute("font-size", "200px");
+
   const bb = t.getBBox();
-  const fudge = 0.75; // evita medio píxel de recorte
+  const fudge = 0.85;
   const w = Math.max(1, bb.width);
   const h = Math.max(1, bb.height);
   t.setAttribute("transform", `translate(${-bb.x - fudge},${-bb.y - fudge})`);
   svg.setAttribute("viewBox", `0 0 ${w + fudge * 2} ${h + fudge * 2}`);
 }
+
 
 /**
  * Actualiza las etiquetas elásticas de los selectores del menú (SVG).
@@ -498,9 +499,9 @@ function openAboutPopup() {
 }
 
 /* ===== Brand (texto puro arriba-izquierda) ===== */
-function syncBrandLabel(){
+function syncBrandLabel() {
   const faux = document.querySelector('#brand .brand-faux');
-  if(!faux) return;
+  if (!faux) return;
   const txt = (faux.getAttribute('data-label') || '').toUpperCase();
   fitFauxSVG(faux, txt);
 }
@@ -514,3 +515,15 @@ window.addEventListener('resize', () => {
 
 // Abrir popup About al pulsar el brand
 document.getElementById('brand')?.addEventListener('click', openAboutPopup);
+
+
+// Recalcular rótulos cuando la fuente esté lista (evita medir con fallback)
+if (document.fonts && document.fonts.load) {
+  Promise.all([
+    document.fonts.load('900 40px "CooperHewitt-Heavy"'),
+    document.fonts.ready
+  ]).then(() => {
+    syncElasticMenuLabels();
+    if (typeof syncBrandLabel === "function") syncBrandLabel();
+  });
+}

@@ -1,5 +1,15 @@
 /* Fuente solo para el menú (archivo en el root junto a style.css) */
-@font-face {
+/* Cooper Hewitt Heavy */
+@font-face{
+  font-family: "CooperHewitt-Heavy";
+  src: url("cooper-hewitt.heavy.otf") format("opentype");
+  font-weight: 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* (opcional) mismo archivo mapeado a 800 por si lo pides así en algún sitio */
+@font-face{
   font-family: "CooperHewitt-Heavy";
   src: url("cooper-hewitt.heavy.otf") format("opentype");
   font-weight: 800;
@@ -762,4 +772,17 @@ body.dragging #canvas {
   font-family:"CooperHewitt-Heavy", system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
   font-weight:800; fill: var(--mint-apple);
   text-transform: uppercase;
+}
+
+
+/* Usa siempre la heavy en las placas del menú y del brand */
+.select-faux,
+.brand-faux {
+  font-family: "CooperHewitt-Heavy", system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+  font-weight: 900;
+  font-synthesis-weight: none; /* no “bold” sintético del navegador */
+}
+.select-faux text,
+.brand-faux text {
+  font-weight: 900;
 }
