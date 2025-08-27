@@ -13,67 +13,93 @@
   --cardinal-height-y: clamp(48px, 6vh, 96px);
 
   /* Tamaño de arrows (control central) */
-  --edge-nudge: 0px; /* microajuste para pegar a sangre (0–2px) */
+  --edge-nudge: 0px;
+  /* microajuste para pegar a sangre (0–2px) */
   --edge-top-gap: 0px;
   --edge-bottom-gap: 0px;
 
   /*margenes de colores*/
-  --frame-v: 5dvh; /* margen vertical top/bottom */
-  --frame-h: 2.5dvw; /* margen horizontal left/right */
+  --frame-v: 5dvh;
+  /* margen vertical top/bottom */
+  --frame-h: 2.5dvw;
+  /* margen horizontal left/right */
 
-  --axis-thickness: 2px; /* grosor de la línea */
-  --axis-dash: 16px; /* largo de cada dash */
-  --axis-gap: 12px; /* separación entre dashes */
+  --axis-thickness: 2px;
+  /* grosor de la línea */
+  --axis-dash: 16px;
+  /* largo de cada dash */
+  --axis-gap: 12px;
+  /* separación entre dashes */
 
-  --axis-phase-x: -8px; /* offset desde el centro para X */
-  --axis-phase-y: -8px; /* offset desde el centro para Y */
+  --axis-phase-x: -8px;
+  /* offset desde el centro para X */
+  --axis-phase-y: -8px;
+  /* offset desde el centro para Y */
 
   /* Radar pulse */
   --radar-color: var(--mint-apple);
   --radar-stroke: 10px;
   --radar-duration: 1400ms;
-  --radar-delay: 500ms; /* segunda onda, desfasada */
+  --radar-delay: 500ms;
+  /* segunda onda, desfasada */
 
   /* mouse-axes (rose-clay) */
 
-  --content-h: calc(
-    100dvh - (var(--frame-v) * 2)
-  ); /* alto útil = 100dvh - 2*frame-v */
-  --content-w: calc(
-    100dvw - (var(--frame-h) * 2)
-  ); /* ancho útil = 100dvw - 2*frame-h */
+  --content-h: calc(100dvh - (var(--frame-v) * 2));
+  /* alto útil = 100dvh - 2*frame-v */
+  --content-w: calc(100dvw - (var(--frame-h) * 2));
+  /* ancho útil = 100dvw - 2*frame-h */
 
   /* Paleta utilitaria */
-  --mint-apple: #c9ff7f; /* acento menta */
-  --slate-warm: #686369; /* gris pizarra cálido */
-  --rose-clay: #ba9592; /* rosa arcilla suave */
-  --neon-green: #00ff00; /* highlight/estado activo */
-  --aqua: #00ffff; /* cian de énfasis */
-  --royal-blue: #0000ff; /* azul intenso */
-  --ink: #000000; /* texto/contornos */
+  --mint-apple: #c9ff7f;
+  /* acento menta */
+  --slate-warm: #686369;
+  /* gris pizarra cálido */
+  --rose-clay: #ba9592;
+  /* rosa arcilla suave */
+  --neon-green: #00ff00;
+  /* highlight/estado activo */
+  --aqua: #00ffff;
+  /* cian de énfasis */
+  --royal-blue: #0000ff;
+  /* azul intenso */
+  --ink: #000000;
+  /* texto/contornos */
 
   /* Z order (bottom → top) */
-  --z-margins: 1; /* #margenes-menta (no usar z-index en el contenedor) */
-  --z-mouse-axes: 2; /* #mouse-axes */
-  --z-canvas: 3; /* #canvas */
-  --z-axes: 4; /* ejes centrales dentro del canvas */
-  --z-items: 5; /* items */
-  --z-cardinal: 6; /* flechas cardinales */
-  --z-nav: 7; /* navegación/botones */
-  --z-popup: 8; /* overlay popup */
-  --z-modal: 9999; /* modal imagen grande */
-  --z-hover: 999; /* z-index temporal mientras hover */
+  --z-margins: 1;
+  /* #margenes-menta (no usar z-index en el contenedor) */
+  --z-mouse-axes: 2;
+  /* #mouse-axes */
+  --z-canvas: 3;
+  /* #canvas */
+  --z-axes: 4;
+  /* ejes centrales dentro del canvas */
+  --z-items: 5;
+  /* items */
+  --z-cardinal: 9;
+  /* flechas cardinales */
+  --z-nav: 7;
+  /* navegación/botones */
+  --z-popup: 8;
+  /* overlay popup */
+  --z-modal: 9999;
+  /* modal imagen grande */
+  --z-hover: 999;
+  /* z-index temporal mientras hover */
 
   /* === Items (size & shadow tokens) === */
   /* Un solo token fluido para ambos ejes usando vmin → crece según el lado corto */
   --item-size: clamp(112px, 26vmin, 480px);
 
   /* Offset fluido: 1px en iPhone SE (1vmin=3.75px) → 8px en ~1440×900 (1vmin≈9px) */
-  --shadow-step: clamp(2px, 0.9vmin, 8px); /* simple y efectivo */
+  --shadow-step: clamp(2px, 0.9vmin, 8px);
+  /* simple y efectivo */
   /* Tus ejes X/Y de la sombra (arriba/izquierda = negativo) */
   --item-shadow-x: calc(-1 * var(--shadow-step));
   --item-shadow-y: calc(-1 * var(--shadow-step));
-  --item-shadow-blur: 2px; /* tosco: sin blur */
+  --item-shadow-blur: 2px;
+  /* tosco: sin blur */
   --item-shadow-color: rgba(0, 0, 0, 0.85);
 }
 
@@ -85,8 +111,10 @@ body {
   padding: 0;
   font-family: Arial, sans-serif;
   background: var(--rose-clay);
-  overflow: hidden; /* fallback */
-  overflow: clip; /* crop global en el viewport (mejor que hidden) */
+  overflow: hidden;
+  /* fallback */
+  overflow: clip;
+  /* crop global en el viewport (mejor que hidden) */
 
   display: flex;
   align-items: center;
@@ -98,13 +126,16 @@ body {
   position: relative;
   width: 100dvw;
   height: var(--content-h);
-  background: var(--mint-apple); /* menta */
-  padding: 0px; /* 5dvh y 2.5dvw */
+  background: var(--mint-apple);
+  /* menta */
+  padding: 0px;
+  /* 5dvh y 2.5dvw */
   box-sizing: border-box;
   /* OJO: el recorte ahora lo hace <body>, aquí dejamos el overflow libre */
 
   display: flex;
-  justify-content: center; /* padding no suma tamaño */
+  justify-content: center;
+  /* padding no suma tamaño */
 }
 
 /* === 2) Canvas (fondo gris) === */
@@ -140,7 +171,8 @@ body {
   border-radius: 50%;
   opacity: 0;
   pointer-events: none;
-  z-index: 0; /* por debajo de .item (z=1), por encima del fondo */
+  z-index: 0;
+  /* por debajo de .item (z=1), por encima del fondo */
 }
 
 @keyframes radarPulse {
@@ -148,9 +180,11 @@ body {
     transform: translate(-50%, -50%) scale(0.05);
     opacity: 0;
   }
+
   10% {
     opacity: 0.7;
   }
+
   100% {
     transform: translate(-50%, -50%) scale(1);
     opacity: 0;
@@ -161,6 +195,7 @@ body {
 body.radar-fade #canvas::before {
   animation: radarPulse var(--radar-duration) ease-out 1;
 }
+
 body.radar-fade #canvas::after {
   animation: radarPulse var(--radar-duration) ease-out 1;
   animation-delay: var(--radar-delay);
@@ -172,6 +207,7 @@ body:has(#axis-center:hover) #canvas::before,
 body.radar-active #canvas::before {
   animation: radarPulse var(--radar-duration) ease-out infinite;
 }
+
 body:has(#axis-center:hover) #canvas::after,
 body.radar-active #canvas::after {
   animation: radarPulse var(--radar-duration) ease-out infinite;
@@ -195,15 +231,18 @@ html {
 .axis {
   position: absolute;
   z-index: var(--z-axes);
-  pointer-events: none; /* no bloquear clics */
+  pointer-events: none;
+  /* no bloquear clics */
 }
 
 #axis-x {
   left: 0;
   right: 0;
   top: 50%;
-  height: 0; /* dibujamos con pseudo-elementos */
+  height: 0;
+  /* dibujamos con pseudo-elementos */
 }
+
 #axis-x::before,
 #axis-x::after {
   content: "";
@@ -215,26 +254,24 @@ html {
   background-size: auto 100%;
   pointer-events: none;
 }
+
 /* izquierda (centro → izquierda) */
 #axis-x::before {
   left: 0;
   right: 50%;
-  background-image: repeating-linear-gradient(
-    to left,
-    var(--mint-apple) 0 var(--axis-dash),
-    transparent 0 calc(var(--axis-dash) + var(--axis-gap))
-  );
+  background-image: repeating-linear-gradient(to left,
+      var(--mint-apple) 0 var(--axis-dash),
+      transparent 0 calc(var(--axis-dash) + var(--axis-gap)));
   background-position: calc(100% - var(--axis-phase-x)) 50%;
 }
+
 /* derecha (centro → derecha) */
 #axis-x::after {
   left: 50%;
   right: 0;
-  background-image: repeating-linear-gradient(
-    to right,
-    var(--mint-apple) 0 var(--axis-dash),
-    transparent 0 calc(var(--axis-dash) + var(--axis-gap))
-  );
+  background-image: repeating-linear-gradient(to right,
+      var(--mint-apple) 0 var(--axis-dash),
+      transparent 0 calc(var(--axis-dash) + var(--axis-gap)));
   background-position: var(--axis-phase-x) 50%;
 }
 
@@ -242,8 +279,10 @@ html {
   top: 0;
   bottom: 0;
   left: 50%;
-  width: 0; /* dibujamos con pseudo-elementos */
+  width: 0;
+  /* dibujamos con pseudo-elementos */
 }
+
 #axis-y::before,
 #axis-y::after {
   content: "";
@@ -255,26 +294,24 @@ html {
   background-size: 100% auto;
   pointer-events: none;
 }
+
 /* arriba (centro → arriba) */
 #axis-y::before {
   top: 0;
   bottom: 50%;
-  background-image: repeating-linear-gradient(
-    to top,
-    var(--mint-apple) 0 var(--axis-dash),
-    transparent 0 calc(var(--axis-dash) + var(--axis-gap))
-  );
+  background-image: repeating-linear-gradient(to top,
+      var(--mint-apple) 0 var(--axis-dash),
+      transparent 0 calc(var(--axis-dash) + var(--axis-gap)));
   background-position: 50% calc(100% - var(--axis-phase-y));
 }
+
 /* abajo (centro → abajo) */
 #axis-y::after {
   top: 50%;
   bottom: 0;
-  background-image: repeating-linear-gradient(
-    to bottom,
-    var(--mint-apple) 0 var(--axis-dash),
-    transparent 0 calc(var(--axis-dash) + var(--axis-gap))
-  );
+  background-image: repeating-linear-gradient(to bottom,
+      var(--mint-apple) 0 var(--axis-dash),
+      transparent 0 calc(var(--axis-dash) + var(--axis-gap)));
   background-position: 50% var(--axis-phase-y);
 }
 
@@ -326,12 +363,10 @@ html {
   max-height: var(--item-size);
   object-fit: contain;
   /* sombra simple y "tosca": arriba/izquierda, sin redondeos */
-  filter: drop-shadow(
-    var(--item-shadow-x) var(--item-shadow-y) var(--item-shadow-blur)
-      var(--item-shadow-color)
-  );
+  filter: drop-shadow(var(--item-shadow-x) var(--item-shadow-y) var(--item-shadow-blur) var(--item-shadow-color));
   border-radius: 0;
-  pointer-events: none; /* el click lo gestiona el contenedor .item */
+  pointer-events: none;
+  /* el click lo gestiona el contenedor .item */
   user-select: none;
   -webkit-user-drag: none;
 }
@@ -349,7 +384,8 @@ html {
   height: var(--frame-v);
   display: flex;
   align-items: center;
-  justify-content: space-between; /* un select a cada extremo */
+  justify-content: space-between;
+  /* un select a cada extremo */
   z-index: var(--z-nav);
 }
 
@@ -357,7 +393,8 @@ html {
 .eje-selector {
   appearance: none;
   background: #000;
-  color: var(--mint-apple); /* tu menta ya definida en :root */
+  color: var(--mint-apple);
+  /* tu menta ya definida en :root */
   height: 100%;
   font-family: "CooperHewitt-Heavy", system-ui, -apple-system, Segoe UI, Roboto,
     Arial, sans-serif;
@@ -409,7 +446,8 @@ html {
   display: flex;
   align-items: center;
   justify-content: center;
-  background: rgba(0, 0, 0, 0.25); /* velito translúcido */
+  background: rgba(0, 0, 0, 0.25);
+  /* velito translúcido */
   z-index: var(--z-modal);
   /* Sin borde, sin sombra */
 }
@@ -417,7 +455,8 @@ html {
 .popup-img-grande {
   max-width: 90vw;
   max-height: 90vh;
-  border-radius: 0; /* coherente con imágenes sin radios */
+  border-radius: 0;
+  /* coherente con imágenes sin radios */
   background: transparent;
   box-shadow: none;
   border: none;
@@ -458,16 +497,19 @@ html {
   justify-content: center;
   line-height: 0;
 }
+
 .slot-top {
   top: 0px;
   left: 50%;
   transform: translate(-50%, 0);
 }
+
 .slot-bottom {
   bottom: 0px;
   left: 50%;
   transform: translate(-50%, 0);
 }
+
 .slot-left {
   left: 0px;
   top: 50%;
@@ -501,6 +543,7 @@ html {
 .slot-top .cardinal-img {
   transform: translateY(calc(-1 * var(--edge-top-gap)));
 }
+
 .slot-bottom .cardinal-img {
   transform: translateY(var(--edge-bottom-gap));
 }
@@ -516,10 +559,12 @@ body.dragging #canvas {
   outline: 2px dashed var(--aqua);
   outline-offset: 2px;
 }
+
 @media (prefers-reduced-motion: reduce) {
   .item {
     transition: none !important;
   }
+
   /* desactiva pulso del radar para personas sensibles al movimiento */
   body:has(#axis-center:hover) #canvas::before,
   body:has(#axis-center:hover) #canvas::after,
@@ -547,7 +592,7 @@ body.dragging #canvas {
 }
 
 /* Keep native select for a11y, but invisible; it covers the whole button */
-.select-wrap > select.eje-selector {
+.select-wrap>select.eje-selector {
   position: absolute;
   inset: 0;
   width: 100%;
@@ -568,7 +613,8 @@ body.dragging #canvas {
   padding: 0 10px;
   z-index: 1;
 }
-.select-faux > .elastic-label {
+
+.select-faux>.elastic-label {
   display: inline-block;
   white-space: nowrap;
   line-height: 1;
@@ -576,7 +622,8 @@ body.dragging #canvas {
     Arial, sans-serif;
   font-weight: 800;
   color: var(--mint-apple);
-  font-size: 180px; /* base huge size; will be scaled down/up */
+  font-size: 180px;
+  /* base huge size; will be scaled down/up */
   transform-origin: left center;
   will-change: transform;
 }
@@ -587,4 +634,108 @@ body.dragging #canvas {
     max-width: none;
     flex: 1 1 45%;
   }
+}
+
+
+/* === MENU: wrappers + iOS border fix + max-width = content-w/2 === */
+#menu {
+  gap: clamp(6px, 1.5vw, 12px);
+}
+
+.select-wrap {
+  position: relative;
+  height: var(--frame-v);
+  flex: 1 1 0;
+  max-width: min(500px, calc(var(--content-w) / 2));
+  min-width: 0;
+  overflow: hidden;
+}
+
+.eje-selector {
+  -webkit-appearance: none;
+  appearance: none;
+  border: 0;
+  outline: none;
+  box-shadow: none;
+  margin: 0;
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  background: transparent;
+  color: transparent;
+  z-index: 2;
+  cursor: pointer;
+}
+
+.select-faux {
+  position: absolute;
+  inset: 0;
+  background: #000;
+  color: var(--mint-apple);
+  border: none;
+  padding: 0;
+  margin: 0;
+  overflow: hidden;
+  z-index: 1;
+}
+
+.select-faux .elastic-svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.select-faux text {
+  font-family: "CooperHewitt-Heavy", system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+  font-weight: 800;
+  fill: var(--mint-apple);
+  text-transform: uppercase;
+}
+
+/* === AXES override: X left→right full width, Y top→bottom reversed (to top) === */
+#axis-x::before,
+#axis-x::after {
+  display: none !important;
+}
+
+#axis-x::after {
+  content: "";
+  display: block !important;
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 50%;
+  height: var(--axis-thickness);
+  transform: translateY(-50%);
+  background-image: repeating-linear-gradient(to right,
+      var(--mint-apple) 0 var(--axis-dash),
+      transparent 0 calc(var(--axis-dash) + var(--axis-gap)));
+  background-repeat: repeat;
+  background-size: auto 100%;
+  background-position: 0 50%;
+  pointer-events: none;
+}
+
+#axis-y::before,
+#axis-y::after {
+  display: none !important;
+}
+
+#axis-y::after {
+  content: "";
+  display: block !important;
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 50%;
+  width: var(--axis-thickness);
+  transform: translateX(-50%);
+  background-image: repeating-linear-gradient(to top,
+      var(--mint-apple) 0 var(--axis-dash),
+      transparent 0 calc(var(--axis-dash) + var(--axis-gap)));
+  background-repeat: repeat;
+  background-size: 100% auto;
+  background-position: 50% 0;
+  pointer-events: none;
 }

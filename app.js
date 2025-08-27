@@ -20,6 +20,7 @@ async function cargarItems() {
 
   // Renderiza los selectores con las opciones válidas
   renderizarSelectoresEjes();
+  syncElasticMenuLabels();
 }
 
 // Renderiza los selectores de ejes evitando duplicados
@@ -41,6 +42,59 @@ function renderizarSelectoresEjes() {
       if (eje === ejeX) optX.selected = true;
       selectX.appendChild(optX);
     }
+
+
+    // ======== Elastic faux labels (SVG viewBox fill) ========
+    function __ensureElasticSVG(faux) {
+      let svg = faux.querySelector('.elastic-svg');
+      if (!svg) {
+        svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+        svg.classList.add('elastic-svg');
+        svg.setAttribute('preserveAspectRatio', 'none'); // fill & distort
+        const t = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+        t.setAttribute('x', '0'); t.setAttribute('y', '0');
+        t.setAttribute('dominant-baseline', 'hanging');
+        svg.appendChild(t);
+        faux.appendChild(svg);
+      }
+      return svg;
+    }
+
+    function fitFauxSVG(faux, text) {
+      const svg = __ensureElasticSVG(faux);
+      const t = svg.querySelector('text');
+      const upper = (text || '').toUpperCase();
+      t.textContent = upper;
+
+      const cs = getComputedStyle(faux);
+      const fam = cs.fontFamily || 'sans-serif';
+      const wgt = cs.fontWeight || '800';
+      const color = cs.color || 'currentColor';
+      t.setAttribute('style', `font-family:${fam};font-weight:${wgt};fill:${color}`);
+
+      t.removeAttribute('transform');
+      t.setAttribute('font-size', '200px');
+
+      const bb = t.getBBox();
+      const fudge = 0.75;
+      const w = Math.max(1, bb.width);
+      const h = Math.max(1, bb.height);
+      t.setAttribute('transform', `translate(${-bb.x - fudge},${-bb.y - fudge})`);
+      svg.setAttribute('viewBox', `0 0 ${w + fudge * 2} ${h + fudge * 2}`);
+    }
+
+    function syncElasticMenuLabels(container = '#menu') {
+      const root = (typeof container === 'string') ? document.querySelector(container) : container;
+      if (!root) return;
+      root.querySelectorAll('.select-wrap').forEach(wrap => {
+        const select = wrap.querySelector('select.eje-selector');
+        const faux = wrap.querySelector('.select-faux');
+        if (!select || !faux) return;
+        const opt = select.options[select.selectedIndex];
+        fitFauxSVG(faux, opt ? opt.textContent : '');
+      });
+    }
+
   });
   // Eje Y
   selectY.innerHTML = "";
@@ -62,10 +116,12 @@ function renderizarSelectoresEjes() {
       ejeY = ejes.find((e) => e !== ejeX);
     }
     renderizarSelectoresEjes();
+    syncElasticMenuLabels();
     renderizarItems();
 
     syncElasticMenuLabels();
     generateCardinalArrows();
+    syncElasticMenuLabels();
     syncElasticMenuLabels();
   };
   selectY.onchange = function () {
@@ -74,10 +130,12 @@ function renderizarSelectoresEjes() {
       ejeX = ejes.find((e) => e !== ejeY);
     }
     renderizarSelectoresEjes();
+    syncElasticMenuLabels();
     renderizarItems();
 
     syncElasticMenuLabels();
     generateCardinalArrows();
+    syncElasticMenuLabels();
     syncElasticMenuLabels();
   };
 }
@@ -417,6 +475,7 @@ window.onload = async function () {
 
   generateCardinalArrows();
   syncElasticMenuLabels();
+  syncElasticMenuLabels();
   showLastClickedAsTarget(); // radar y target central
 
   // — móvil/ptr — desactiva pan del navegador SOLO mientras se arrastra sobre el canvas
@@ -442,6 +501,7 @@ window.onload = async function () {
 };
 
 window.addEventListener("resize", () => {
+  syncElasticMenuLabels();
   renderizarItems();
 
   syncElasticMenuLabels();
