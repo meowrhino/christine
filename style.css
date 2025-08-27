@@ -53,6 +53,18 @@
   --z-nav: 7; /* navegación/botones */
   --z-popup: 8; /* overlay popup */
   --z-modal: 9999; /* modal imagen grande */
+
+  /* === Items (size & shadow tokens) === */
+  /* Un solo token fluido para ambos ejes usando vmin → crece según el lado corto */
+  --item-size: clamp(112px, 26vmin, 480px);
+
+  /* Offset fluido: 1px en iPhone SE (1vmin=3.75px) → 8px en ~1440×900 (1vmin≈9px) */
+  --shadow-step: clamp(2px, 0.9vmin, 8px); /* simple y efectivo */
+  /* Tus ejes X/Y de la sombra (arriba/izquierda = negativo) */
+  --item-shadow-x: calc(-1 * var(--shadow-step));
+  --item-shadow-y: calc(-1 * var(--shadow-step));
+  --item-shadow-blur: 2px; /* tosco: sin blur */
+  --item-shadow-color: rgba(0, 0, 0, 0.85);
 }
 
 /* ============================
@@ -69,6 +81,7 @@ body {
   align-items: center;
 }
 
+/* === 1) Margen contenedor (margenes-menta) === */
 /* Marco de márgenes menta que centra el canvas */
 #margenes-menta {
   position: relative;
@@ -77,11 +90,13 @@ body {
   background: var(--mint-apple); /* menta */
   padding: 0px; /* 5dvh y 2.5dvw */
   box-sizing: border-box;
+  overflow: clip; /* evita que items fuera rompan el layout (especialmente en móvil) */
 
   display: flex;
   justify-content: center; /* padding no suma tamaño */
 }
 
+/* === 2) Canvas (fondo gris) === */
 /* ============================
    Canvas Styles 
    ============================ */
@@ -149,6 +164,7 @@ html {
   height: 100dvh;
 }
 
+/* === 3) Ejes (X/Y) y centro === */
 /* ============================
    Axis Styles
    ============================
@@ -268,7 +284,7 @@ html {
 }
 
 /* ============================ */
-/* Ítem visual y modular        */
+/* Items (solo imagen)          */
 /* ============================ */
 .item {
   position: absolute;
@@ -284,17 +300,22 @@ html {
   display: block;
   width: auto;
   height: auto;
-  /* límites responsivos para que no sea ni enano en móvil ni gigante en desktop */
-  max-width: clamp(120px, 18dvw, 520px);
-  max-height: clamp(80px, 26dvh, 320px);
+  /* límites responsivos por tokens */
+  max-width: var(--item-size);
+  max-height: var(--item-size);
   object-fit: contain;
-  /* sombra hacia arriba + izquierda, negra y difuminada */
-  filter: drop-shadow(-12px -12px 20px rgba(0,0,0,0.35));
-  pointer-events: none;      /* el click lo gestiona el contenedor .item */
+  /* sombra simple y "tosca": arriba/izquierda, sin redondeos */
+  filter: drop-shadow(
+    var(--item-shadow-x) var(--item-shadow-y) var(--item-shadow-blur)
+      var(--item-shadow-color)
+  );
+  border-radius: 0;
+  pointer-events: none; /* el click lo gestiona el contenedor .item */
   user-select: none;
   -webkit-user-drag: none;
 }
 
+/* === 7) Menú / navegación === */
 /* ============================
    Menu Styles
    ============================ */
@@ -313,6 +334,7 @@ html {
   cursor: pointer;
 }
 
+/* === 8) Popup === */
 /* ============================
    Popup Styles
    ============================ */
@@ -379,34 +401,7 @@ html {
   cursor: pointer;
 }
 
-/* ============================
-   Responsive Styles
-   ============================
-   Adjust item sizes for smaller screens (<600px)
-*/
-@media (max-width: 600px) {
-  /* Canvas sigue 1x en móvil */
-  /* #canvas {
-    width: 100dvw;
-    height: 100dvh;
-  } */
-
-  /* :root {
-    --content-h: calc(100dvh - (var(--frame-v)));
-    --content-w: calc(100dvw - (var(--frame-h)));
-  } */
-
-  .item img {
-    display: block;
-    width: auto;
-    height: auto;
-    max-width: clamp(96px, 44vw, 320px);
-    max-height: clamp(72px, 34vh, 240px);
-    object-fit: contain;
-    filter: drop-shadow(-12px -12px 20px rgba(0,0,0,0.35));
-  }
-}
-
+/* === 6) Flechas cardinales (bordes) === */
 /* ============================
    Cardinal Arrows (bordes)
    ============================ */

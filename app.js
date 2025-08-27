@@ -87,6 +87,11 @@ function mapToCanvas(val, min, max, size) {
   return ((val - min) / (max - min)) * size;
 }
 
+// Ángulo aleatorio en rango [-max,+max]
+function randomAngle(max = 15) {
+  return Math.random() * (max * 2) - max;
+}
+
 // Renderiza los ítems en el canvas posicionándolos según los ejes seleccionados
 function renderizarItems() {
   const canvas = document.getElementById("canvas");
@@ -105,6 +110,11 @@ function renderizarItems() {
     if (item.colorFondo) {
       div.style.setProperty("--item-bg", item.colorFondo);
     }
+
+    // Rotación base inicial (±15º), persistente mientras no haya hover
+    const baseRot = randomAngle(15);
+    div.dataset.rotBase = baseRot.toFixed(2);
+    div.style.transform = `rotate(${div.dataset.rotBase}deg)`;
 
     // Contenido (solo imagen por id)
     const img = document.createElement("img");
@@ -140,15 +150,22 @@ function renderizarItems() {
     };
   });
 
-  // Efectos hover (±15º de rotación, leve zoom)
-  canvas.querySelectorAll(".item").forEach((item) => {
-    item.addEventListener("mouseenter", () => {
-      const randomRotate = Math.random() * 30 - 15; // de -15° a +15°
-      const randomScale  = 1 + Math.random() * 0.10; // leve zoom
-      item.style.transform = `scale(${randomScale.toFixed(2)}) rotate(${randomRotate.toFixed(2)}deg)`;
+  // Hover: cada entrada recalcula una rotación nueva (±15º) SIN enderezar,
+  // y sube z-index mientras dure el hover.
+  canvas.querySelectorAll(".item").forEach((el) => {
+    el.addEventListener("mouseenter", () => {
+      const base = parseFloat(el.dataset.rotBase || "0");
+      const delta = randomAngle(15);
+      const target = (base + delta).toFixed(2);
+      el.dataset.rotHover = target;
+      el.style.zIndex = "999"; // por encima del resto
+      el.style.transform = `rotate(${target}deg)`;
     });
-    item.addEventListener("mouseleave", () => {
-      item.style.transform = "";
+    el.addEventListener("mouseleave", () => {
+      // Vuelve a la rotación base (no se endereza a 0)
+      const base = parseFloat(el.dataset.rotBase || "0").toFixed(2);
+      el.style.transform = `rotate(${base}deg)`;
+      el.style.zIndex = ""; // restaurar stacking normal
     });
   });
 }
