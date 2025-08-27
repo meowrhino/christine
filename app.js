@@ -3,6 +3,10 @@ let ejes = [];
 let ejeX = "";
 let ejeY = "";
 
+// =============================
+// 1) Estado & utilidades
+// =============================
+
 let radarFadeTimer = null; // controla el fade-out del radar
 
 // Carga los ítems y ejes, y pinta el canvas
@@ -89,21 +93,37 @@ function mapToCanvas(val, min, max, size) {
   return ((val - min) / (max - min)) * size;
 }
 
+// Lee una variable CSS (ms) desde :root de forma segura
+function msFromVar(name, fallback) {
+  const v = getComputedStyle(document.documentElement)
+    .getPropertyValue(name)
+    .trim();
+  const n = parseFloat(v);
+  return Number.isFinite(n) ? n : fallback;
+}
+
 // Programa un "fade-out" suave del radar: quita la animación infinita,
 // lanza 1 pulso final y limpia la clase tras ~1.8s (duración+delay).
 function scheduleRadarFade() {
   document.body.classList.remove("radar-active");
   document.body.classList.add("radar-fade");
   clearTimeout(radarFadeTimer);
+  // Sincroniza con CSS: duración + delay (y un pequeño margen)
+  const dur = msFromVar("--radar-duration", 1400);
+  const del = msFromVar("--radar-delay", 400);
   radarFadeTimer = setTimeout(() => {
     document.body.classList.remove("radar-fade");
-  }, 1800); // ≈ var(--radar-duration 1400ms) + var(--radar-delay 400ms)
+  }, dur + del + 80);
 }
 
 // Ángulo aleatorio en rango [-max,+max]
 function randomAngle(max = 15) {
   return Math.random() * (max * 2) - max;
 }
+
+// =============================
+// 3) Render de ítems (imagen + rotación base + hover)
+// =============================
 
 // Renderiza los ítems en el canvas posicionándolos según los ejes seleccionados
 function renderizarItems() {
@@ -183,6 +203,10 @@ function renderizarItems() {
   });
 }
 
+// =============================
+// 4) Popup (detalle de ítem)
+// =============================
+
 // Popup con info detallada del ítem seleccionado
 function mostrarPopup(item) {
   const popup = document.getElementById("popup");
@@ -229,7 +253,111 @@ document.getElementById("popup").onclick = (e) => {
   }
 };
 
-// Inicializa todo al cargar la ventana
+// =============================
+// 5) Flechas cardinales (bordes)
+// =============================
+
+function normalizePole(label) {
+  return String(label || "")
+    .trim()
+    .toUpperCase()
+    .replace(/[^A-Z0-9]/g, "");
+}
+
+function setSlotImg(slotId, side, poleName) {
+  const slot = document.getElementById(slotId);
+  if (!slot) return;
+  slot.replaceChildren();
+
+  const img = new Image();
+  img.className = "cardinal-img";
+  img.alt = `${side}-${poleName}`;
+  img.src = `img/_arrows/${side}/${poleName}.png`;
+  img.onerror = () => {
+    console.log(`[arrows] missing asset: img/_arrows/${side}/${poleName}.png`);
+    slot.replaceChildren(); // dejar vacío si falta
+  };
+  slot.appendChild(img);
+}
+
+/**
+ * Genera/actualiza las flechas cardinales según los ejes activos.
+ * Convención:
+ *  - Eje X:  "Left/Right"  → left = etiqueta IZQUIERDA, right = DERECHA
+ *  - Eje Y:  "Top/Bottom"  → top = etiqueta SUPERIOR (valores negativos),
+ *                             bottom = INFERIOR (positivos)
+ */
+function generateCardinalArrows() {
+  const [leftLabel, rightLabel] = String(ejeX).split("/");
+  const [topLabel, bottomLabel] = String(ejeY).split("/");
+
+  setSlotImg("slot-left", "left", normalizePole(leftLabel));
+  setSlotImg("slot-right", "right", normalizePole(rightLabel));
+  setSlotImg("slot-top", "top", normalizePole(topLabel));
+  setSlotImg("slot-bottom", "bottom", normalizePole(bottomLabel));
+}
+
+// =============================
+// 6) Radar & centro
+// =============================
+
+function showLastClickedAsTarget() {
+  // Garantiza que exista #axis-center dentro del canvas
+  let c = document.getElementById("axis-center");
+  if (!c) {
+    c = document.createElement("div");
+    c.id = "axis-center";
+  }
+  const __canvasForCenter = document.getElementById("canvas");
+  if (__canvasForCenter && c.parentElement !== __canvasForCenter) {
+    __canvasForCenter.appendChild(c);
+  }
+
+  // Hover (desktop) con fade-out suave al salir
+  c.addEventListener("mouseenter", () => {
+    clearTimeout(radarFadeTimer);
+    document.body.classList.remove("radar-fade");
+    document.body.classList.add("radar-active");
+  });
+  c.addEventListener("mouseleave", () => {
+    // pequeña gracia para evitar cortes si reentras enseguida
+    const grace = 120;
+    setTimeout(() => {
+      if (!c.matches(":hover")) scheduleRadarFade();
+    }, grace);
+  });
+
+  // Click / tap directamente sobre el centro (mantiene activo 3s y luego fade)
+  c.addEventListener("pointerdown", () => {
+    clearTimeout(radarFadeTimer);
+    document.body.classList.remove("radar-fade");
+    document.body.classList.add("radar-active");
+    setTimeout(() => {
+      scheduleRadarFade();
+    }, 3000);
+  });
+
+  // Tap/click cerca del centro también dispara (más fácil en móvil)
+  window.addEventListener("pointerdown", (e) => {
+    const cx = window.innerWidth / 2,
+      cy = window.innerHeight / 2;
+    const hit =
+      Math.max(Math.abs(e.clientX - cx), Math.abs(e.clientY - cy)) <= 24; // tolerancia
+    if (hit) {
+      clearTimeout(radarFadeTimer);
+      document.body.classList.remove("radar-fade");
+      document.body.classList.add("radar-active");
+      setTimeout(() => {
+        scheduleRadarFade();
+      }, 3000);
+    }
+  });
+}
+
+// =============================
+// 7) Init & eventos globales
+// =============================
+
 window.onload = async function () {
   await cargarItems();
   renderizarItems();
@@ -304,93 +432,4 @@ function mostrarPopupGrande(src) {
   }
   modal.innerHTML = `<img src="${src}" class="popup-img-grande">`;
   modal.style.display = "flex";
-}
-
-// --- Cardinal Arrows ---
-function normalizePole(label) {
-  return String(label || "")
-    .trim()
-    .toUpperCase()
-    .replace(/[^A-Z0-9]/g, "");
-}
-
-function setSlotImg(slotId, side, poleName) {
-  const slot = document.getElementById(slotId);
-  if (!slot) return;
-  slot.replaceChildren();
-
-  const img = new Image();
-  img.className = "cardinal-img";
-  img.alt = `${side}-${poleName}`;
-  img.src = `img/_arrows/${side}/${poleName}.png`;
-  img.onerror = () => {
-    console.log(`[arrows] missing asset: img/_arrows/${side}/${poleName}.png`);
-    slot.replaceChildren(); // dejar vacío si falta
-  };
-  slot.appendChild(img);
-}
-
-/**
- * Genera/actualiza las flechas cardinales según los ejes activos.
- * Convención:
- *  - Eje X:  "Left/Right"  → left = etiqueta IZQUIERDA, right = DERECHA
- *  - Eje Y:  "Top/Bottom"  → top = etiqueta SUPERIOR (valores negativos),
- *                             bottom = INFERIOR (positivos)
- */
-function generateCardinalArrows() {
-  const [leftLabel, rightLabel] = String(ejeX).split("/");
-  const [topLabel, bottomLabel] = String(ejeY).split("/");
-
-  setSlotImg("slot-left", "left", normalizePole(leftLabel));
-  setSlotImg("slot-right", "right", normalizePole(rightLabel));
-  setSlotImg("slot-top", "top", normalizePole(topLabel));
-  setSlotImg("slot-bottom", "bottom", normalizePole(bottomLabel));
-}
-
-// --- Radar y Target Central ---
-function showLastClickedAsTarget() {
-  // Garantiza que exista #axis-center dentro del canvas
-  let c = document.getElementById("axis-center");
-  if (!c) {
-    c = document.createElement("div");
-    c.id = "axis-center";
-  }
-  const __canvasForCenter = document.getElementById("canvas");
-  if (__canvasForCenter && c.parentElement !== __canvasForCenter) {
-    __canvasForCenter.appendChild(c);
-  }
-
-  // Hover (desktop) con fade-out suave al salir
-  c.addEventListener("mouseenter", () => {
-    clearTimeout(radarFadeTimer);
-    document.body.classList.remove("radar-fade");
-    document.body.classList.add("radar-active");
-  });
-  c.addEventListener("mouseleave", () => {
-    scheduleRadarFade();
-  });
-
-  // Click / tap directamente sobre el centro (mantiene activo 3s y luego fade)
-  c.addEventListener("pointerdown", () => {
-    clearTimeout(radarFadeTimer);
-    document.body.classList.remove("radar-fade");
-    document.body.classList.add("radar-active");
-    setTimeout(() => {
-      scheduleRadarFade();
-    }, 3000);
-  });
-
-  // Tap/click cerca del centro también dispara (más fácil en móvil)
-  window.addEventListener("pointerdown", (e) => {
-    const cx = window.innerWidth / 2, cy = window.innerHeight / 2;
-    const hit = Math.max(Math.abs(e.clientX - cx), Math.abs(e.clientY - cy)) <= 24; // tolerancia
-    if (hit) {
-      clearTimeout(radarFadeTimer);
-      document.body.classList.remove("radar-fade");
-      document.body.classList.add("radar-active");
-      setTimeout(() => {
-        scheduleRadarFade();
-      }, 3000);
-    }
-  });
 }

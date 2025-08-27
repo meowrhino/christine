@@ -53,6 +53,7 @@
   --z-nav: 7; /* navegación/botones */
   --z-popup: 8; /* overlay popup */
   --z-modal: 9999; /* modal imagen grande */
+  --z-hover: 999; /* z-index temporal mientras hover */
 
   /* === Items (size & shadow tokens) === */
   /* Un solo token fluido para ambos ejes usando vmin → crece según el lado corto */
@@ -304,6 +305,7 @@ html {
   overflow: visible;
   z-index: var(--z-items);
   pointer-events: auto;
+  will-change: transform;
 }
 
 .item img {
@@ -383,7 +385,7 @@ html {
 .popup-img-grande {
   max-width: 90vw;
   max-height: 90vh;
-  border-radius: 12px;
+  border-radius: 0; /* coherente con imágenes sin radios */
   background: transparent;
   box-shadow: none;
   border: none;
@@ -475,4 +477,24 @@ html {
 body.dragging #canvas {
   touch-action: none;
   overscroll-behavior: contain;
+}
+
+/* ===== Accesibilidad & motion-safety ===== */
+.item:focus-visible {
+  outline: 2px dashed var(--aqua);
+  outline-offset: 2px;
+}
+@media (prefers-reduced-motion: reduce) {
+  .item {
+    transition: none !important;
+  }
+  /* desactiva pulso del radar para personas sensibles al movimiento */
+  body:has(#axis-center:hover) #canvas::before,
+  body:has(#axis-center:hover) #canvas::after,
+  body.radar-active #canvas::before,
+  body.radar-active #canvas::after,
+  body.radar-fade #canvas::before,
+  body.radar-fade #canvas::after {
+    animation: none !important;
+  }
 }
