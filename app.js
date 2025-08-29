@@ -156,10 +156,10 @@ function fitFauxSVG(faux, text) {
   t.setAttribute("style", `font-family:${fam};font-weight:${wgt};font-kerning:normal;fill:${color}`);
 
   t.removeAttribute("transform");
-  t.setAttribute("font-size", "200px");
+  t.setAttribute("font-size", "300px");
 
   const bb = t.getBBox();
-  const fudge = 0.85;
+  const fudge = 0.0;
   const w = Math.max(1, bb.width);
   const h = Math.max(1, bb.height);
   t.setAttribute("transform", `translate(${-bb.x - fudge},${-bb.y - fudge})`);

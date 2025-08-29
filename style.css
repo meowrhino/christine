@@ -703,52 +703,7 @@ body.dragging #canvas {
   text-transform: uppercase;
 }
 
-/* === AXES override: X left→right full width, Y top→bottom reversed (to top) === */
-#axis-x::before,
-#axis-x::after {
-  display: none !important;
-}
 
-#axis-x::after {
-  content: "";
-  display: block !important;
-  position: absolute;
-  left: 0;
-  right: 0;
-  top: 50%;
-  height: var(--axis-thickness);
-  transform: translateY(-50%);
-  background-image: repeating-linear-gradient(to right,
-      var(--mint-apple) 0 var(--axis-dash),
-      transparent 0 calc(var(--axis-dash) + var(--axis-gap)));
-  background-repeat: repeat;
-  background-size: auto 100%;
-  background-position: 0 50%;
-  pointer-events: none;
-}
-
-#axis-y::before,
-#axis-y::after {
-  display: none !important;
-}
-
-#axis-y::after {
-  content: "";
-  display: block !important;
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  left: 50%;
-  width: var(--axis-thickness);
-  transform: translateX(-50%);
-  background-image: repeating-linear-gradient(to top,
-      var(--mint-apple) 0 var(--axis-dash),
-      transparent 0 calc(var(--axis-dash) + var(--axis-gap)));
-  background-repeat: repeat;
-  background-size: 100% auto;
-  background-position: 50% 0;
-  pointer-events: none;
-}
 
 /* ===== Brand (solo texto) — misma barra/márgenes que el resto ===== */
 .brand{
