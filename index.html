@@ -35,13 +35,13 @@
     </div>
   </div>
 
-  <div id="popup" class="oculto">
+  <div id="popup" class="oculto" role="dialog" aria-modal="true" aria-labelledby="popup-titulo">
     <div class="contenido-popup">
-      <span id="cerrar-popup">×</span>
+      <button id="cerrar-popup" aria-label="Close">×</button>
       <h2 id="popup-titulo"></h2>
+      <div class="wip-stamp" aria-hidden="true">Work in Progress</div>
       <div id="popup-descripcion"></div>
-      <img id="popup-imagen" src="" alt="">
-      <div id="popup-galeria"></div>
+      <ul id="popup-metadata" aria-label="Coordinates"></ul>
     </div>
   </div>
 

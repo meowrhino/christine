@@ -264,47 +264,101 @@ function renderizarItems() {
 // 4) Popup (detalle de ítem)
 // =============================
 
-function mostrarPopup(item) {
-  const popup = document.getElementById("popup");
-  popup.classList.remove("oculto");
-  document.getElementById("popup-titulo").textContent = item.titulo;
-  document.getElementById("popup-descripcion").innerHTML = (item.descripcion || [])
-    .map((p) => `<p>${p}</p>`)
-    .join("");
-  const popupImg = document.getElementById("popup-imagen");
-  popupImg.src = `img/_items/${item.id}.png`;
-  popupImg.onerror = () => {
-    if (item.imagen || item.miniatura) {
-      popupImg.src = item.imagen || item.miniatura;
-    }
-  };
-  popupImg.style.objectFit = "contain";
-  popupImg.style.maxWidth = "95%";
-  popupImg.style.maxHeight = "40vh";
-  popupImg.style.cursor = "zoom-in";
-  popupImg.onclick = (e) => {
-    e.stopPropagation();
-    mostrarPopupGrande(popupImg.src);
-  };
-  document.getElementById("popup-galeria").innerHTML = (item.galeria || [])
-    .map((src) =>
-      src.match(/\.(mp4)$/i)
-        ? `<video src="${src}" controls style="max-width:120px;max-height:120px;"></video>`
-        : `<img src="${src}" style="max-width:120px;max-height:120px;">`
-    )
-    .join("");
+function formatAxisValue(v) {
+  const n = Number(v);
+  if (!Number.isFinite(n)) return "—";
+  const sign = n > 0 ? "+" : n < 0 ? "−" : "±";
+  return `${sign}${Math.abs(n)}`;
 }
 
-// Cerrar popup al hacer click en botón cerrar
-document.getElementById("cerrar-popup").onclick = (e) => {
-  document.getElementById("popup").classList.add("oculto");
-};
-// Click fuera del popup también lo cierra
-document.getElementById("popup").onclick = (e) => {
-  if (e.target === document.getElementById("popup")) {
-    document.getElementById("popup").classList.add("oculto");
+// Paleta posible de fondos (snap al más cercano según la imagen)
+const POPUP_PALETTE = [
+  { name: "blue",  rgb: [0, 0, 255] },
+  { name: "aqua",  rgb: [0, 255, 255] },
+  { name: "green", rgb: [0, 255, 0] }
+];
+const POPUP_COLOR_CLASSES = POPUP_PALETTE.map((p) => `color-${p.name}`);
+const popupColorCache = new Map();
+
+function nearestPaletteColor(r, g, b) {
+  let best = POPUP_PALETTE[0];
+  let bestD = Infinity;
+  for (const p of POPUP_PALETTE) {
+    const d = (r - p.rgb[0]) ** 2 + (g - p.rgb[1]) ** 2 + (b - p.rgb[2]) ** 2;
+    if (d < bestD) { bestD = d; best = p; }
   }
+  return best.name;
+}
+
+function detectItemColor(itemId) {
+  if (popupColorCache.has(itemId)) {
+    return Promise.resolve(popupColorCache.get(itemId));
+  }
+  return new Promise((resolve) => {
+    const img = new Image();
+    img.crossOrigin = "anonymous";
+    img.onload = () => {
+      try {
+        const canvas = document.createElement("canvas");
+        // muestreo pequeño: el navegador promedia al escalar
+        canvas.width = 8; canvas.height = 8;
+        const ctx = canvas.getContext("2d", { willReadFrequently: true });
+        ctx.drawImage(img, 0, 0, 8, 8);
+        const data = ctx.getImageData(0, 0, 8, 8).data;
+        let r = 0, g = 0, b = 0, count = 0;
+        for (let i = 0; i < data.length; i += 4) {
+          const a = data[i + 3];
+          if (a < 32) continue; // ignora píxeles casi transparentes
+          r += data[i]; g += data[i + 1]; b += data[i + 2]; count++;
+        }
+        if (count === 0) { resolve(null); return; }
+        const name = nearestPaletteColor(r / count, g / count, b / count);
+        popupColorCache.set(itemId, name);
+        resolve(name);
+      } catch (_err) {
+        resolve(null);
+      }
+    };
+    img.onerror = () => resolve(null);
+    img.src = `img/_items/${itemId}.png`;
+  });
+}
+
+function mostrarPopup(item) {
+  const popup = document.getElementById("popup");
+  popup.classList.remove("oculto", "popup-about", ...POPUP_COLOR_CLASSES);
+  document.getElementById("popup-titulo").textContent = item.titulo || "";
+  document.getElementById("popup-descripcion").innerHTML = "";
+
+  const meta = document.getElementById("popup-metadata");
+  const ejesItem = item.ejes || {};
+  meta.innerHTML = Object.entries(ejesItem)
+    .map(
+      ([axis, value]) =>
+        `<li><span class="meta-axis">${axis}</span><span class="meta-value">${formatAxisValue(value)}</span></li>`
+    )
+    .join("");
+
+  detectItemColor(item.id).then((name) => {
+    if (name && !popup.classList.contains("oculto")) {
+      popup.classList.add(`color-${name}`);
+    }
+  });
+}
+
+function cerrarPopup() {
+  document.getElementById("popup").classList.add("oculto");
+}
+
+document.getElementById("cerrar-popup").onclick = cerrarPopup;
+document.getElementById("popup").onclick = (e) => {
+  if (e.target === document.getElementById("popup")) cerrarPopup();
 };
+document.addEventListener("keydown", (e) => {
+  if (e.key === "Escape" && !document.getElementById("popup").classList.contains("oculto")) {
+    cerrarPopup();
+  }
+});
 
 // =============================
 // 5) Flechas cardinales (bordes)
@@ -488,14 +542,11 @@ const ABOUT_HTML = `
 
 function openAboutPopup() {
   const popup = document.getElementById("popup");
-  popup.classList.remove("oculto");
+  popup.classList.remove("oculto", ...POPUP_COLOR_CLASSES);
+  popup.classList.add("popup-about");
   document.getElementById("popup-titulo").textContent = ABOUT_TITLE;
   document.getElementById("popup-descripcion").innerHTML = ABOUT_HTML;
-
-  const img = document.getElementById("popup-imagen");
-  const gal = document.getElementById("popup-galeria");
-  if (img) { img.src = ""; img.style.display = "none"; }
-  if (gal) { gal.innerHTML = ""; }
+  document.getElementById("popup-metadata").innerHTML = "";
 }
 
 /* ===== Brand (texto puro arriba-izquierda) ===== */
