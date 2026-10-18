@@ -1,0 +1,13 @@
+{
+  "$schema": "../../schema/project.json",
+  "title": "Peggy Gou x Nike",
+  "axes": {
+    "Illustration/Graphic": -4,
+    "Artwork/Commercial": 10,
+    "Demure/Opinionated": -5,
+    "Silly/Serious": -10
+  },
+  "text": [
+    "For Peggy Gou‘s in-house quarantine activity stories, Studio Yukiko was asked to provide vibrant motion graphics to illustrate her train of thought."
+  ]
+}

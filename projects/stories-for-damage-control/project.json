@@ -1,0 +1,15 @@
+{
+  "$schema": "../../schema/project.json",
+  "title": "Stories for Damage Control",
+  "axes": {
+    "Illustration/Graphic": -10,
+    "Artwork/Commercial": 10,
+    "Demure/Opinionated": -3,
+    "Silly/Serious": -10
+  },
+  "text": [
+    "For Studio Yukiko, contribution for the digital indoors zine of It’s Nice That x Dropbox.",
+    "Studio Yukiko founders Michelle Phillips and Johannes Conrad made up stories for their daughter",
+    "to explain why she couldn‘t go out during the beginning of the pandemic. These sweet stories inspired us to submit a joyful contribution during lockdown days."
+  ]
+}

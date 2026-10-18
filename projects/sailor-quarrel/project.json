@@ -1,0 +1,13 @@
+{
+  "$schema": "../../schema/project.json",
+  "title": "Sailor Quarrel",
+  "axes": {
+    "Illustration/Graphic": 0,
+    "Artwork/Commercial": -10,
+    "Demure/Opinionated": 5,
+    "Silly/Serious": 5
+  },
+  "text": [
+    "Contribution for Image in the Time of Bootlegging. My vision: Bootleg Sailor Moon x Bratz Lesbians."
+  ]
+}

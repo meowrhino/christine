@@ -1,0 +1,13 @@
+{
+  "$schema": "../../schema/project.json",
+  "title": "New Apple",
+  "axes": {
+    "Illustration/Graphic": 5,
+    "Artwork/Commercial": 1,
+    "Demure/Opinionated": -5,
+    "Silly/Serious": -9
+  },
+  "text": [
+    "German-Colombian artist Mila works in Japan and wished for vivid Colombian color references in combination with Japanese typographic cuteness."
+  ]
+}

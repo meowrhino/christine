@@ -1,0 +1,13 @@
+{
+  "$schema": "../../schema/project.json",
+  "title": "Coming of Middle-Age",
+  "axes": {
+    "Illustration/Graphic": -10,
+    "Artwork/Commercial": 5,
+    "Demure/Opinionated": 0,
+    "Silly/Serious": 3
+  },
+  "text": [
+    "Commission work for German feminist magazine “Missy Magazine” about sex life after menopause."
+  ]
+}

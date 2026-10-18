@@ -1,0 +1,14 @@
+{
+  "$schema": "../../schema/project.json",
+  "title": "SISSYHOOD",
+  "axes": {
+    "Illustration/Graphic": 0,
+    "Artwork/Commercial": -9,
+    "Demure/Opinionated": 10,
+    "Silly/Serious": 0
+  },
+  "text": [
+    "Nominated and exhibited at poster competition of International Assembly - Design and creative festival Glasgow 2024 and International Poster Exhibition of the Graphic Design Biennale in Chaumont, France.",
+    "Since a long time shoujo manga has been a haven of queer solidarity and I invited my friends Nino and Emile to provide illustrations for an imaginary queer manga magazine. Filled with fantasy stories united under the umbrella of queer solidarity. This poster is filled with citations out of The Faggots & Their Friends Between Revolutions by Larry Mitchell, Cruising Utopia: The Then and There of Queer Futurity by José Esteban Muñoz, TikTok star Devin Halbal’s and solidarity expressions between WLW & MLM in Japanese. With this poster of ours we wish the viewer to see a glimpse of queer utopia on the horizon."
+  ]
+}

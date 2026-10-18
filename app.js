@@ -11,8 +11,7 @@ let radarFadeTimer = null; // controla el fade-out del radar
 
 // Carga los ítems y ejes, y pinta el canvas
 async function cargarItems() {
-  const respuesta = await fetch("items.json");
-  itemsData = await respuesta.json();
+  itemsData = await CASA.loadData(); // js/carga.js: data/site.json + projects/
   ejes = Object.keys(itemsData[0].ejes);
 
   // Selecciona ejes aleatorios distintos
@@ -215,7 +214,7 @@ function renderizarItems() {
 
     // Contenido (solo imagen por id)
     const img = document.createElement("img");
-    img.src = `img/_items/${item.id}.png`;
+    img.src = `projects/${item.id}/1.webp`;
     img.alt = item.titulo || "";
     div.appendChild(img);
 
@@ -320,7 +319,7 @@ function detectItemColor(itemId) {
       }
     };
     img.onerror = () => resolve(null);
-    img.src = `img/_items/${itemId}.png`;
+    img.src = `projects/${itemId}/1.webp`;
   });
 }
 

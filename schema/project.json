@@ -1,0 +1,18 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "projects/<nombre>/project.json: un proyecto",
+  "description": "projects/<nombre>/project.json: un proyecto del lienzo. Su imagen, 1.webp, en la misma carpeta. VS Code lee este fichero (por el \"$schema\" de arriba del JSON) para autocompletar, explicar cada campo y subrayar lo que está mal; el build y la vista previa lo usan para revisar.",
+  "type": "object",
+  "required": ["title", "axes", "text"],
+  "additionalProperties": false,
+  "properties": {
+    "$schema": { "type": "string" },
+    "_": { "type": "string" },
+    "title": { "type": "string", "description": "El título." },
+    "axes": {
+      "type": "object", "description": "Dónde cae en cada eje, de -12 a 12, sin comillas: { \"Illustration/Graphic\": 7, \"Artwork/Commercial\": 7, \"Demure/Opinionated\": -1, \"Silly/Serious\": 7 }. Todos los proyectos llevan los mismos ejes.",
+      "additionalProperties": { "type": "number", "minimum": -12, "maximum": 12 }
+    },
+    "text": { "type": "array", "items": { "type": "string" }, "description": "El texto del popup, un párrafo por línea." }
+  }
+}

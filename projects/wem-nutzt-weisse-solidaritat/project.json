@@ -1,0 +1,13 @@
+{
+  "$schema": "../../schema/project.json",
+  "title": "Wem nützt weiße Solidarität? – What’s the use of white solidarity?",
+  "axes": {
+    "Illustration/Graphic": 5,
+    "Artwork/Commercial": -8,
+    "Demure/Opinionated": 10,
+    "Silly/Serious": 5
+  },
+  "text": [
+    "Who benefits from white solidarity? This is a question that white people never have to ask themselves. Nevertheless, it is a question that racialised people often have to deal with in everyday life. Is this person really a white ally? Or is this person’s “help” a strategy to impose their ideas on us on how we are supposed to behave in a white environment?"
+  ]
+}

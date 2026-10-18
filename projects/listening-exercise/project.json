@@ -1,0 +1,13 @@
+{
+  "$schema": "../../schema/project.json",
+  "title": "Listening Exercise",
+  "axes": {
+    "Illustration/Graphic": 7,
+    "Artwork/Commercial": -10,
+    "Demure/Opinionated": 10,
+    "Silly/Serious": 5
+  },
+  "text": [
+    "What is the first reaction to a complaint? Compassion or annoyance? “Listening exercise” is a confrontation, an audio-visual experiment, to the listener‘s possible negative reaction regarding a complaint and how defensiveness points out a complicity within the situation. Because when a problem is pointed out, it becomes clear that it is not an isolated problem but a a system of problems. My complaint is not an isolated case, but why is it treated as such? In three parts, my experience of being stereotyped and fetishized as an racialized person is described as self-written texts. These text snippets are embedded between text extracts from decolonial theory with quotes from Stuart Hall, bell hooks, and Sara Ahmed. The crucial factor for this combination of texts was my realization that often personal experiences of discrimination are not taken seriously because they often have an emotional tone."
+  ]
+}

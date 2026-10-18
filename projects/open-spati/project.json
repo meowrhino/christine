@@ -1,0 +1,13 @@
+{
+  "$schema": "../../schema/project.json",
+  "title": "Open Späti: Wofür ist es zu spät? – What is it too late for?",
+  "axes": {
+    "Illustration/Graphic": 7,
+    "Artwork/Commercial": 1,
+    "Demure/Opinionated": -3,
+    "Silly/Serious": 0
+  },
+  "text": [
+    "“What Is It Too Late For?” is an art and literature project that transforms Berlin’s Spätis into temporary reading spaces. Inspired by their cultural and social role, the project brings poetry into public space and highlights the city’s multilingualism."
+  ]
+}

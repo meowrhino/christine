@@ -1,0 +1,13 @@
+{
+  "$schema": "../../schema/project.json",
+  "title": "Leerstellen, oder: Wo sind eigentlich die…? – Empty spaces or: Where are actually the…?",
+  "axes": {
+    "Illustration/Graphic": 3,
+    "Artwork/Commercial": -2,
+    "Demure/Opinionated": 4,
+    "Silly/Serious": 2
+  },
+  "text": [
+    "Digital poster print for feminist art lecture #WHOSEFREEDOM?."
+  ]
+}

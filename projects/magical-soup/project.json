@@ -1,0 +1,13 @@
+{
+  "$schema": "../../schema/project.json",
+  "title": "Magical Soup",
+  "axes": {
+    "Illustration/Graphic": 5,
+    "Artwork/Commercial": 8,
+    "Demure/Opinionated": -3,
+    "Silly/Serious": 3
+  },
+  "text": [
+    "Language and the spoken word have the ability to turn what we think we know upside down. Hamburger Bahnhof’s Magical Soup exhibition of time-based media art since the 1960s explores the slippages and magic inherent in images, sound, language and new technology. The show interrogates how these art forms shape the way we comprehend our surroundings, and what happens when meaning begins to slip away from grasp. Much like many of the exhibition’s works, the show’s identity plays on the idea of words tumbling, slipping and sliding away into incomprehensible magic. A critical examination of racial politics and solidarity movements through graphic essays."
+  ]
+}

@@ -7,31 +7,26 @@ Inspirado en el estilo de “Christine Janjira Meyer”.
 
 ## Estructura
 
+Sigue la receta del estudio ([meowrhino/JAMstack](https://github.com/meowrhino/JAMstack)). Para
+editar: [GUIA.md](GUIA.md). Si el build falla: [CLAUDE.md](CLAUDE.md).
+
+- **data/site.json**: el nombre y, en `lists`, qué proyectos salen en el lienzo.
+- **projects/<slug>/**: un proyecto: `project.json` (`title`, `axes` de -12 a 12, `text`) y su
+  imagen, `1.webp`.
+- **schema/**: qué campos lleva cada JSON (VS Code, el build y la vista previa).
+- **build/build.mjs**: → `dist/`: revisa los JSON (y que todos lleven los mismos ejes), escribe lo
+  que se lee sin JS y la imagen para compartir (sharp). Lo publica la Action en GitHub Pages.
+- **js/carga.js**, **js/house.js**: leen los JSON (y los revisan en la vista previa) y los pasan a
+  la forma del `items.json` de antes, que es la que lee `app.js`.
 - **index.html**: contiene el esqueleto de la página.
   - `<div id="canvas">` es el contenedor central.
   - `#axis-x` y `#axis-y` dibujan los ejes cruzados.
   - `#brand` muestra el nombre arriba a la izquierda (sirve también de botón *About*).
   - `#menu` abajo con los dos selectores de ejes.
   - `#popup` y slots cardinales (`slot-top/right/bottom/left`) para detalles y flechas.
-
-- **style.css**: define todas las variables, paleta y estilos:
-  - variables `:root` para márgenes, colores, z-index.
-  - radar central animado (`#canvas::before/after`).
-  - ejes con dashes (`#axis-x::before/after`, `#axis-y::before/after`).
-  - items `.item img` posicionados con `drop-shadow`.
-  - menú inferior y brand superior como “placas negras” con texto menta.
-  - popup modal y flechas cardinales.
-
-- **app.js**:
-  - carga `items.json` y genera ítems en el canvas.
-  - selecciona dos ejes aleatorios y permite cambiarlos vía selectores.
-  - posiciona cada ítem en base a valores normalizados de `-12` a `12`.
-  - gestiona hover (rotación y z-index), click para popup, popup grande.
-  - renderiza las flechas cardinales según ejes actuales.
-  - radar central con fade-out suave y activación al hover/click.
-  - sincroniza labels elásticas (`syncElasticMenuLabels`, `syncBrandLabel`) usando SVG `<text>` + `getBBox`.
-
----
+- **style.css**: variables, paleta, radar central, ejes, ítems, menú, popup y flechas.
+- **app.js**: genera los ítems en el lienzo, elige dos ejes al azar (cambiables en el menú),
+  posiciona cada ítem de -12 a 12, hover, popup y flechas cardinales.
 
 ## Cómo funciona el menú y el brand (etiquetas elásticas)
 
@@ -74,15 +69,13 @@ Esto se debe a cómo los motores SVG calculan `getBBox` y aplican `dominant-base
 - [ ] Eliminar duplicados de CSS (`Elastic Menu` antiguo vs `MENU: wrappers…`).
 - [ ] Unificar la lógica: que solo exista **una** función de render de labels (actualmente hay varios parches).
 - [ ] Revisar responsive en móvil (el brand y los selects se cortan en pantallas estrechas).
-- [ ] Documentar bien `items.json` y añadir un ejemplo.
 
 ---
 
 ## Cómo ejecutar
 
-1. Abrir `index.html` directamente en navegador, o servir con Live Server / cualquier servidor estático.
-2. Asegurarse de que existe `items.json` con estructura `{ id, titulo, descripcion, ejes: {X, Y} }`.
-3. Poner las imágenes en `img/_items/[id].png`.
+1. Live Server sobre la carpeta (la vista previa: si un JSON está mal, sale en pantalla).
+2. Para la web tal cual se publica: `npm ci && node build/build.mjs` → `dist/`.
 
 ---
 

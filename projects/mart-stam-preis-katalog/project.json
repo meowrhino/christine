@@ -1,0 +1,14 @@
+{
+  "$schema": "../../schema/project.json",
+  "title": "Mart-Stam Preis Katalog – Mart-Stam Price Catalogue",
+  "axes": {
+    "Illustration/Graphic": 6,
+    "Artwork/Commercial": 4,
+    "Demure/Opinionated": -1,
+    "Silly/Serious": 5
+  },
+  "text": [
+    "Catalogue for the Mart Stam award for excellent graduation work of Weissensee art school Berlin.",
+    "Creative work requires reflective moments and a rhythm of its own. Those who mechanically follow the beat of the production paradigm don‘t have the chance to fathom the complexity of their own inner world or the outside one, thus forfeiting the possibility of reflecting on their own role. Based on these considerations, we asked ourselves: How can we, as designers, create experiences that cannot be exploited by the recipients in the sense of an economic imperative and create a conscious distance from other productive ways of being? Our visual concept frees itself from expectations and internalizes a lightness that connects the works of the award winners."
+  ]
+}

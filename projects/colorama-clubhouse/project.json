@@ -1,0 +1,13 @@
+{
+  "$schema": "../../schema/project.json",
+  "title": "Colorama Clubhouse",
+  "axes": {
+    "Illustration/Graphic": -8,
+    "Artwork/Commercial": -8,
+    "Demure/Opinionated": 3,
+    "Silly/Serious": -7
+  },
+  "text": [
+    "Commission work for Berlin-based Riso print publisher Colorama as part of the anthology “Colorama Clubhouse”."
+  ]
+}

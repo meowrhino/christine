@@ -1,0 +1,13 @@
+{
+  "$schema": "../../schema/project.json",
+  "title": "Image in the Time of Bootlegging",
+  "axes": {
+    "Illustration/Graphic": 5,
+    "Artwork/Commercial": -5,
+    "Demure/Opinionated": 0,
+    "Silly/Serious": -5
+  },
+  "text": [
+    "What does ”bootleg” mean in a time when copying is embedded in nearly every aspect of culture? Images and graphics are made available so easily that they are simple to copy and reproduce in mass. Bootlegging can be recognizable through the errors of cheap production—mistakes made either intentionally or unintentionally. These images are reproduced without the legal authorization of the image owner from which they originate. The course will not understand the practice of bootlegging as simply copying and imitating, but rather will aim at exploring the transformative potential of bootlegging as a practice of re-appropriation, in which the image or graphic becomes something new and the designer's own."
+  ]
+}

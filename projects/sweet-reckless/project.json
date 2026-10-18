@@ -1,0 +1,14 @@
+{
+  "$schema": "../../schema/project.json",
+  "title": "Sweet & Reckless",
+  "axes": {
+    "Illustration/Graphic": -3,
+    "Artwork/Commercial": -10,
+    "Demure/Opinionated": 1,
+    "Silly/Serious": -5
+  },
+  "text": [
+    "Fluorescent Pink, Aqua, Black, Yellow 4-color Riso print on A3.",
+    "Nominated and exhibited at poster competition of International Assembly Design and creative festival Glasgow 2024."
+  ]
+}

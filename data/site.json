@@ -1,0 +1,24 @@
+{
+  "$schema": "../schema/site.json",
+  "title": "christine janjira meyer",
+  "lists": {
+    "projects": [
+      "bundespreis-fur-kunststudierende-2021",
+      "colorama-clubhouse",
+      "coming-of-middle-age",
+      "leerstellen-oder",
+      "listening-exercise",
+      "magical-soup",
+      "mart-stam-preis-katalog",
+      "new-apple",
+      "open-spati",
+      "peggy-gou-x-nike",
+      "sissyhood",
+      "stories-for-damage-control",
+      "sweet-reckless",
+      "wem-nutzt-weisse-solidaritat",
+      "image-in-the-time-of-bootlegging",
+      "sailor-quarrel"
+    ]
+  }
+}
