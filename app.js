@@ -536,6 +536,7 @@ const ABOUT_HTML = `
       <a href="mailto:hello@example.com">hello@example.com</a><br>
       <a href="https://instagram.com/xxxx" target="_blank" rel="noopener">Instagram</a>
     </p>
+    <p class="credit">web: <a href="https://meowrhino.studio" target="_blank" rel="noopener">meowrhino.studio</a></p>
   </div>
 `;
 

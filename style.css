@@ -536,6 +536,13 @@ html {
   margin-bottom: 0;
 }
 
+/* la firma del estudio, en el about */
+#popup-descripcion .credit {
+  margin-top: 2em;
+  font-size: 11px;
+  opacity: 0.6;
+}
+
 #popup-metadata {
   list-style: none;
   margin: 0;
